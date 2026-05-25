@@ -2,25 +2,10 @@
 Scene setup for the astronomical simulator.
 """
 
-from vpython import color, scene, vector
+from vpython import vector, scene
 
-from config.solar_system_data import (
-    EARTH,
-    EARTH_AVERAGE_DISTANCE,
-    EARTH_AVERAGE_VELOCITY,
-    EARTH_MASS,
-    EARTH_RADIUS,
-    MOON,
-    MOON_AVERAGE_DISTANCE,
-    MOON_AVERAGE_VELOCITY,
-    MOON_MASS,
-    MOON_RADIUS,
-    SUN,
-    SUN_AVERAGE_VELOCITY,
-    SUN_MASS,
-    SUN_RADIUS,
-)
-from models.celestial_body import CelestialBody, CelestialBodyType
+from models.celestial_body import CelestialBody
+from presets.local_system import create_local_system
 
 
 def setup_scene() -> list[CelestialBody]:
@@ -30,48 +15,9 @@ def setup_scene() -> list[CelestialBody]:
     scene.title = "Astronomical Simulator"
     scene.width = 2400
     scene.height = 1200
-    scene.background = color.black
+    scene.background = vector(0.02, 0.03, 0.10)
     scene.resizable = True
 
-    sun = CelestialBody(
-        type=CelestialBodyType.STAR,
-        name=SUN,
-        mass=SUN_MASS,
-        radius=SUN_RADIUS,
-        position=vector(0, 0, 0),
-        velocity=vector(0, SUN_AVERAGE_VELOCITY, 0),
-        colour=color.yellow,
-        make_trail=False,
-    )
-
-    earth = CelestialBody(
-        type=CelestialBodyType.PLANET,
-        name=EARTH,
-        mass=EARTH_MASS,
-        radius=EARTH_RADIUS,
-        position=vector(EARTH_AVERAGE_DISTANCE, 0, 0),
-        velocity=vector(0, EARTH_AVERAGE_VELOCITY, 0),
-        colour=color.blue,
-        make_trail=True,
-    )
-
-    moon = CelestialBody(
-        type=CelestialBodyType.MOON,
-        name=MOON,
-        mass=MOON_MASS,
-        radius=MOON_RADIUS,
-        position=vector(
-            EARTH_AVERAGE_DISTANCE,
-            0,
-            MOON_AVERAGE_DISTANCE,
-        ),
-        velocity=vector(
-            MOON_AVERAGE_VELOCITY,
-            EARTH_AVERAGE_VELOCITY,
-            0,
-        ),
-        colour=color.white,
-        make_trail=True,
-    )
-
-    return [sun, earth, moon]
+    # Create a default celestial body to ensure the scene is initialized.
+    system = create_local_system()
+    return system.get_bodies()
