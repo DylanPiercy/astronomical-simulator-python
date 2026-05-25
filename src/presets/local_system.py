@@ -4,7 +4,7 @@ This file contains preset CelestialBody objects for the local solar system.
 
 from vpython import color, vector
 
-from config.solar_system_data import (
+from config.local_system_data import (
     EARTH,
     EARTH_AVERAGE_DISTANCE,
     EARTH_AVERAGE_VELOCITY,
