@@ -4,7 +4,11 @@ Simulation runner for the astronomical simulator.
 
 from vpython import rate
 
-from config.constants import DEFAULT_UPDATE_RATE, TIME_STEP
+from config.constants import (
+    DEFAULT_DAYS_PER_SECOND,
+    RENDER_RATE,
+    SECONDS_IN_DAY,
+)
 from physics.physics_engine import PhysicsEngine
 
 
@@ -17,14 +21,14 @@ class Simulation:
         self.bodies = bodies
         self.physics_engine = PhysicsEngine()
         self.is_paused = False
-        self.update_rate = DEFAULT_UPDATE_RATE
+        self.days_per_second = DEFAULT_DAYS_PER_SECOND
 
     def run(self) -> None:
         """
         Starts the simulation loop.
         """
         while True:
-            rate(self.update_rate)
+            rate(RENDER_RATE)
 
             if not self.is_paused:
                 self._update_bodies()
@@ -32,13 +36,24 @@ class Simulation:
     def toggle_pause(self) -> None:
         self.is_paused = not self.is_paused
 
-    def set_update_rate(self, update_rate: int) -> None:
-        self.update_rate = update_rate
+    def set_days_per_second(
+        self,
+        days_per_second: int,
+    ) -> None:
+        self.days_per_second = days_per_second
+
+    def _get_time_step(self) -> float:
+        return (
+            SECONDS_IN_DAY
+            * self.days_per_second
+            / RENDER_RATE
+        )
 
     def _update_bodies(self) -> None:
         """
         Updates all bodies using the gravitational effect of every other body.
         """
+        time_step = self._get_time_step()
         accelerations = {}
 
         for body in self.bodies:
@@ -49,11 +64,11 @@ class Simulation:
             self.physics_engine.update_body_velocity(
                 body,
                 accelerations[body],
-                TIME_STEP,
+                time_step,
             )
 
         for body in self.bodies:
-            self.physics_engine.update_body_position(body, TIME_STEP)
+            self.physics_engine.update_body_position(body, time_step)
 
     def _calculate_total_acceleration(self, body):
         """
