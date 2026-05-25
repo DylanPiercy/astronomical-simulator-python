@@ -62,6 +62,7 @@ from config.local_system_data import (
 )
 from models.celestial_body import CelestialBody, CelestialBodyType
 from models.solar_system import SolarSystem
+from presets.preset_creation_helpers import create_moon, create_planet
 
 
 def create_local_system() -> SolarSystem:
@@ -80,7 +81,7 @@ def create_local_system() -> SolarSystem:
         make_trail=False,
     )
 
-    mercury = _create_planet(
+    mercury = create_planet(
         name=MERCURY,
         mass=MERCURY_MASS,
         radius=MERCURY_RADIUS,
@@ -89,7 +90,7 @@ def create_local_system() -> SolarSystem:
         colour=color.gray(0.5),
     )
 
-    venus = _create_planet(
+    venus = create_planet(
         name=VENUS,
         mass=VENUS_MASS,
         radius=VENUS_RADIUS,
@@ -98,7 +99,7 @@ def create_local_system() -> SolarSystem:
         colour=color.orange,
     )
 
-    earth = _create_planet(
+    earth = create_planet(
         name=EARTH,
         mass=EARTH_MASS,
         radius=EARTH_RADIUS,
@@ -107,7 +108,7 @@ def create_local_system() -> SolarSystem:
         colour=color.blue,
     )
 
-    moon = _create_moon(
+    moon = create_moon(
         name=MOON,
         mass=MOON_MASS,
         radius=MOON_RADIUS,
@@ -118,7 +119,7 @@ def create_local_system() -> SolarSystem:
         colour=color.white,
     )
 
-    mars = _create_planet(
+    mars = create_planet(
         name=MARS,
         mass=MARS_MASS,
         radius=MARS_RADIUS,
@@ -127,7 +128,7 @@ def create_local_system() -> SolarSystem:
         colour=color.red,
     )
 
-    jupiter = _create_planet(
+    jupiter = create_planet(
         name=JUPITER,
         mass=JUPITER_MASS,
         radius=JUPITER_RADIUS,
@@ -136,7 +137,7 @@ def create_local_system() -> SolarSystem:
         colour=color.orange,
     )
 
-    saturn = _create_planet(
+    saturn = create_planet(
         name=SATURN,
         mass=SATURN_MASS,
         radius=SATURN_RADIUS,
@@ -145,7 +146,7 @@ def create_local_system() -> SolarSystem:
         colour=color.yellow,
     )
 
-    uranus = _create_planet(
+    uranus = create_planet(
         name=URANUS,
         mass=URANUS_MASS,
         radius=URANUS_RADIUS,
@@ -154,7 +155,7 @@ def create_local_system() -> SolarSystem:
         colour=color.cyan,
     )
 
-    neptune = _create_planet(
+    neptune = create_planet(
         name=NEPTUNE,
         mass=NEPTUNE_MASS,
         radius=NEPTUNE_RADIUS,
@@ -163,7 +164,7 @@ def create_local_system() -> SolarSystem:
         colour=color.blue,
     )
 
-    pluto = _create_planet(
+    pluto = create_planet(
         name=PLUTO,
         mass=PLUTO_MASS,
         radius=PLUTO_RADIUS,
@@ -187,59 +188,4 @@ def create_local_system() -> SolarSystem:
             neptune,
             pluto,
         ],
-    )
-
-
-def _create_planet(
-    name: str,
-    mass: float,
-    radius: float,
-    distance: float,
-    velocity: float,
-    colour,
-) -> CelestialBody:
-    """
-    Creates a planet orbiting the Sun in the X/Y plane.
-    """
-    return CelestialBody(
-        type=CelestialBodyType.PLANET,
-        name=name,
-        mass=mass,
-        radius=radius,
-        position=vector(distance, 0, 0),
-        velocity=vector(0, velocity, 0),
-        colour=colour,
-        make_trail=True,
-    )
-
-def _create_moon(
-    name: str,
-    mass: float,
-    radius: float,
-    parent_distance: float,
-    parent_velocity: float,
-    moon_distance: float,
-    moon_velocity: float,
-    colour,
-) -> CelestialBody:
-    """
-    Creates a moon orbiting a parent body in the X/Z plane.
-    """
-    return CelestialBody(
-        type=CelestialBodyType.MOON,
-        name=name,
-        mass=mass,
-        radius=radius,
-        position=vector(
-            parent_distance,
-            0,
-            moon_distance,
-        ),
-        velocity=vector(
-            moon_velocity,
-            parent_velocity,
-            0,
-        ),
-        colour=colour,
-        make_trail=True,
     )
