@@ -15,6 +15,8 @@ from config.constants import (
     MOON_TRAIL_MAX_LENGTH,
     PLANET_TRAIL_MAX_WIDTH,
     MOON_TRAIL_MAX_WIDTH,
+    STAR_TRAIL_MAX_LENGTH,
+    STAR_TRAIL_MAX_WIDTH,
 )
 
 
@@ -49,20 +51,19 @@ class CelestialBody:
         self.radius = radius
         self.position = position
         self.velocity = velocity
+        self.colour = colour
+        self.make_trail = make_trail
 
         if self.type == CelestialBodyType.STAR:
             visual_radius = radius * STAR_RADIUS_SCALE
-            self.make_trail = False
-            trail_length = 0
-            trail_width = 0
+            trail_length = STAR_TRAIL_MAX_LENGTH if self.make_trail else 0
+            trail_width = STAR_TRAIL_MAX_WIDTH if self.make_trail else 0
         elif self.type == CelestialBodyType.PLANET:
             visual_radius = max(radius * PLANET_RADIUS_SCALE, MIN_PLANET_RADIUS_SCALE)
-            self.make_trail = make_trail
             trail_length = PLANET_TRAIL_MAX_LENGTH if self.make_trail else 0
             trail_width = PLANET_TRAIL_MAX_WIDTH if self.make_trail else 0
         elif self.type == CelestialBodyType.MOON:
             visual_radius = max(radius * MOON_RADIUS_SCALE, MIN_MOON_RADIUS_SCALE)
-            self.make_trail = make_trail
             trail_length = MOON_TRAIL_MAX_LENGTH if self.make_trail else 0
             trail_width = MOON_TRAIL_MAX_WIDTH if self.make_trail else 0
         else:
@@ -71,7 +72,7 @@ class CelestialBody:
         self.visual = sphere(
             pos=self.position * DISTANCE_SCALE,
             radius=visual_radius,
-            color=colour,
+            color=self.colour,
             make_trail=self.make_trail,
             retain=trail_length,
             trail_radius=trail_width,

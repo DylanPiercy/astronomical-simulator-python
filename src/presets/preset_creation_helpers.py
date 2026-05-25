@@ -21,7 +21,7 @@ def create_star(
         position=position,
         velocity=velocity,
         colour=colour,
-        make_trail=False,
+        make_trail=True,
     )
 
 def create_planet(
