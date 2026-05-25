@@ -19,4 +19,4 @@ MIN_BODY_VISUAL_RADIUS = 1.5
 
 # Simulation settings
 UPDATE_RATE = 100  # VPython animation updates per second
-TRAIL_RETAIN = 500  # number of trail points to keep
+TRAIL_RETAIN = 50  # number of trail points to keep

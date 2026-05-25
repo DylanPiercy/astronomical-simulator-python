@@ -4,7 +4,7 @@ Celestial body model used to represent stars, planets, moons, and other astronom
 
 from vpython import sphere, vector
 
-from config.constants import DISTANCE_SCALE, MIN_BODY_VISUAL_RADIUS, RADIUS_SCALE
+from config.constants import DISTANCE_SCALE, MIN_BODY_VISUAL_RADIUS, RADIUS_SCALE, TRAIL_RETAIN
 
 
 class CelestialBody:
@@ -36,6 +36,7 @@ class CelestialBody:
             radius=max(self.radius * RADIUS_SCALE, MIN_BODY_VISUAL_RADIUS),
             color=colour,
             make_trail=make_trail,
+            retain=TRAIL_RETAIN,
         )
 
     def update_visual_position(self) -> None:
