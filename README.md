@@ -77,7 +77,7 @@ pip install -r requirements.txt
 | `perf`     | Improves **performance** of the codebase.                                   |
 | `refactor` | **Code restructuring** without changing behavior or adding features.        |
 | `revert`   | Reverts a previous commit.                                                  |
-| `style`    | Changes that **don’t affect logic**, like formatting or spacing.            |
+| `format`   | Changes that **don’t affect logic**, like formatting or spacing.            |
 | `struct`   | Changes to **project structure** (e.g., file reorganisation).               |
 | `test`     | Adds or updates codebase **tests**.                                         |
 | `temp`     | A **temporary** change to the code.                                         |
