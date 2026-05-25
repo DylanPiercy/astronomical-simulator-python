@@ -1,9 +1,11 @@
 """
 Helper function to create celestial bodies for presets.
 """
+
 from vpython import vector
 
 from models.celestial_body import CelestialBody, CelestialBodyType
+
 
 def create_star(
     name: str,
@@ -23,6 +25,7 @@ def create_star(
         colour=colour,
         make_trail=True,
     )
+
 
 def create_planet(
     name: str,
@@ -45,6 +48,7 @@ def create_planet(
         colour=colour,
         make_trail=True,
     )
+
 
 def create_moon(
     name: str,

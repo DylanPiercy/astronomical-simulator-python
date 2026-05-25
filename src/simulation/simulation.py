@@ -43,11 +43,7 @@ class Simulation:
         self.days_per_second = days_per_second
 
     def _get_time_step(self) -> float:
-        return (
-            SECONDS_IN_DAY
-            * self.days_per_second
-            / RENDER_RATE
-        )
+        return SECONDS_IN_DAY * self.days_per_second / RENDER_RATE
 
     def _update_bodies(self) -> None:
         """

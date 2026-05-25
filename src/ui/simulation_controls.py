@@ -68,7 +68,4 @@ class SimulationControls:
             self._toggle_pause()
 
     def _simulation_speed_label(self) -> str:
-        return (
-            f"{self.simulation.days_per_second} "
-            "simulated day(s) per second"
-        )
+        return f"{self.simulation.days_per_second} " "simulated day(s) per second"

@@ -2,6 +2,7 @@
 Solar system model to represent a collection of celestial bodies.
 """
 
+
 class SolarSystem:
     """
     Represents a named collection of celestial bodies.

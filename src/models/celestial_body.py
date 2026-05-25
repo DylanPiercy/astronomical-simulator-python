@@ -1,6 +1,7 @@
 """
 Celestial body model used to represent stars, planets, moons, and other astronomical objects.
 """
+
 from enum import Enum
 from vpython import sphere, vector
 
@@ -68,7 +69,7 @@ class CelestialBody:
             trail_width = MOON_TRAIL_MAX_WIDTH if self.make_trail else 0
         else:
             raise ValueError(f"Invalid celestial body type: {self.type}")
-        
+
         self.visual = sphere(
             pos=self.position * DISTANCE_SCALE,
             radius=visual_radius,
