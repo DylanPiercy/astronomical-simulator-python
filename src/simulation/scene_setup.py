@@ -22,8 +22,8 @@ def setup_scene() -> list[CelestialBody]:
     Sets up the initial VPython scene and creates the starting celestial bodies.
     """
     scene.title = "Astronomical Simulator"
-    scene.width = 1200
-    scene.height = 800
+    scene.width = 2400
+    scene.height = 1200
     scene.background = color.black
 
     sun = CelestialBody(
