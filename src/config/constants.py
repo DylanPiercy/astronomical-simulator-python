@@ -13,10 +13,16 @@ SECONDS_PER_DAY = 86_400
 TIME_STEP = SECONDS_PER_DAY  # one simulated day per update
 
 # Visual scaling
-DISTANCE_SCALE = 300 / ASTRONOMICAL_UNIT  # 1 AU becomes 1 VPython unit
-RADIUS_SCALE = 1 / 50_000_000  # keeps planets visible without realistic radius scale
-MIN_BODY_VISUAL_RADIUS = 1.5
+DISTANCE_SCALE = 300 / ASTRONOMICAL_UNIT
+
+STAR_RADIUS_SCALE = 300 / ASTRONOMICAL_UNIT
+PLANET_RADIUS_SCALE = 300 / ASTRONOMICAL_UNIT
+MOON_RADIUS_SCALE = 300 / ASTRONOMICAL_UNIT
+
+MIN_PLANET_RADIUS_SCALE = 0.5
+MIN_MOON_RADIUS_SCALE = 0.1
 
 # Simulation settings
-UPDATE_RATE = 100  # VPython animation updates per second
-TRAIL_RETAIN = 50  # number of trail points to keep
+UPDATE_RATE = 1  # VPython animation updates per second
+PLANET_TRAIL_RETAIN = 50
+MOON_TRAIL_RETAIN = 10
