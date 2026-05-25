@@ -60,9 +60,8 @@ from config.local_system_data import (
     VENUS_MASS,
     VENUS_RADIUS,
 )
-from models.celestial_body import CelestialBody, CelestialBodyType
 from models.solar_system import SolarSystem
-from presets.preset_creation_helpers import create_moon, create_planet
+from presets.preset_creation_helpers import create_moon, create_planet, create_star
 
 
 def create_local_system() -> SolarSystem:
@@ -70,15 +69,13 @@ def create_local_system() -> SolarSystem:
     Creates the preset celestial bodies for the local solar system.
     """
 
-    sun = CelestialBody(
-        type=CelestialBodyType.STAR,
+    sun = create_star(
         name=SUN,
         mass=SUN_MASS,
         radius=SUN_RADIUS,
         position=vector(0, 0, 0),
         velocity=vector(0, SUN_AVERAGE_VELOCITY, 0),
         colour=color.yellow,
-        make_trail=False,
     )
 
     mercury = create_planet(

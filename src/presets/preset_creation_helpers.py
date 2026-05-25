@@ -1,10 +1,28 @@
 """
-Helper function to create planet and moon celestial bodies for presets.
+Helper function to create celestial bodies for presets.
 """
 from vpython import vector
 
 from models.celestial_body import CelestialBody, CelestialBodyType
 
+def create_star(
+    name: str,
+    mass: float,
+    radius: float,
+    position: vector,
+    velocity: vector,
+    colour,
+) -> CelestialBody:
+    return CelestialBody(
+        type=CelestialBodyType.STAR,
+        name=name,
+        mass=mass,
+        radius=radius,
+        position=position,
+        velocity=velocity,
+        colour=colour,
+        make_trail=False,
+    )
 
 def create_planet(
     name: str,
@@ -15,7 +33,7 @@ def create_planet(
     colour,
 ) -> CelestialBody:
     """
-    Creates a planet orbiting the Sun in the X/Y plane.
+    Creates a planet orbiting a parent body in the X/Y plane.
     """
     return CelestialBody(
         type=CelestialBodyType.PLANET,
