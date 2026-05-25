@@ -4,7 +4,7 @@ Simulation runner for the astronomical simulator.
 
 from vpython import rate
 
-from config.constants import TIME_STEP, UPDATE_RATE
+from config.constants import DEFAULT_UPDATE_RATE, TIME_STEP
 from physics.physics_engine import PhysicsEngine
 
 
@@ -16,14 +16,24 @@ class Simulation:
     def __init__(self, bodies):
         self.bodies = bodies
         self.physics_engine = PhysicsEngine()
+        self.is_paused = False
+        self.update_rate = DEFAULT_UPDATE_RATE
 
     def run(self) -> None:
         """
         Starts the simulation loop.
         """
         while True:
-            rate(UPDATE_RATE)
-            self._update_bodies()
+            rate(self.update_rate)
+
+            if not self.is_paused:
+                self._update_bodies()
+
+    def toggle_pause(self) -> None:
+        self.is_paused = not self.is_paused
+
+    def set_update_rate(self, update_rate: int) -> None:
+        self.update_rate = update_rate
 
     def _update_bodies(self) -> None:
         """
