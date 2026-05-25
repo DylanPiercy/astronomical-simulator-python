@@ -11,8 +11,10 @@ from config.constants import (
     MOON_RADIUS_SCALE,
     MIN_PLANET_RADIUS_SCALE,
     MIN_MOON_RADIUS_SCALE,
-    PLANET_TRAIL_RETAIN,
-    MOON_TRAIL_RETAIN,
+    PLANET_TRAIL_MAX_LENGTH,
+    MOON_TRAIL_MAX_LENGTH,
+    PLANET_TRAIL_MAX_WIDTH,
+    MOON_TRAIL_MAX_WIDTH,
 )
 
 
@@ -51,15 +53,18 @@ class CelestialBody:
         if self.type == CelestialBodyType.STAR:
             visual_radius = radius * STAR_RADIUS_SCALE
             self.make_trail = False
-            trail_retain = 0
+            trail_length = 0
+            trail_width = 0
         elif self.type == CelestialBodyType.PLANET:
             visual_radius = max(radius * PLANET_RADIUS_SCALE, MIN_PLANET_RADIUS_SCALE)
             self.make_trail = make_trail
-            trail_retain = PLANET_TRAIL_RETAIN if make_trail else 0
+            trail_length = PLANET_TRAIL_MAX_LENGTH if self.make_trail else 0
+            trail_width = PLANET_TRAIL_MAX_WIDTH if self.make_trail else 0
         elif self.type == CelestialBodyType.MOON:
             visual_radius = max(radius * MOON_RADIUS_SCALE, MIN_MOON_RADIUS_SCALE)
             self.make_trail = make_trail
-            trail_retain = MOON_TRAIL_RETAIN if make_trail else 0
+            trail_length = MOON_TRAIL_MAX_LENGTH if self.make_trail else 0
+            trail_width = MOON_TRAIL_MAX_WIDTH if self.make_trail else 0
         else:
             raise ValueError(f"Invalid celestial body type: {self.type}")
         
@@ -67,8 +72,9 @@ class CelestialBody:
             pos=self.position * DISTANCE_SCALE,
             radius=visual_radius,
             color=colour,
-            make_trail=make_trail,
-            retain=trail_retain,
+            make_trail=self.make_trail,
+            retain=trail_length,
+            trail_radius=trail_width,
         )
 
     def update_visual_position(self) -> None:

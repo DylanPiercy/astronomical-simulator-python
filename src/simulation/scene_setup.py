@@ -60,10 +60,14 @@ def setup_scene() -> list[CelestialBody]:
         name=MOON,
         mass=MOON_MASS,
         radius=MOON_RADIUS,
-        position=vector(EARTH_AVERAGE_DISTANCE + MOON_AVERAGE_DISTANCE, 0, 0),
-        velocity=vector(
+        position=vector(
+            EARTH_AVERAGE_DISTANCE,
             0,
-            EARTH_AVERAGE_VELOCITY + MOON_AVERAGE_VELOCITY,
+            MOON_AVERAGE_DISTANCE,
+        ),
+        velocity=vector(
+            MOON_AVERAGE_VELOCITY,
+            EARTH_AVERAGE_VELOCITY,
             0,
         ),
         colour=color.white,
