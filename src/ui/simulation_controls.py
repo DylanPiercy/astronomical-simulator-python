@@ -23,6 +23,8 @@ class SimulationControls:
         self.pause_button: Any = None
         self.speed_text: Any = None
         self.camera_focus_menu: Any = None
+        self.camera_focus_button: Any = None
+        self.selected_camera_focus_name = "Center"
 
     def setup(self) -> None:
         """
@@ -50,12 +52,17 @@ class SimulationControls:
         self.camera_focus_menu = menu(
             choices=self._get_camera_focus_choices(),
             selected="Center",
-            bind=self._update_camera_focus,
+            bind=self._select_camera_focus,
         )
 
-        scene.append_to_caption(
-            "\nControls: click the scene once, then press Space to pause/resume."
+        scene.append_to_caption(" ")
+
+        self.camera_focus_button = button(
+            text="Focus camera",
+            bind=self._apply_camera_focus,
         )
+
+        scene.append_to_caption("\nControls: Press SPACE to pause/resume.")
 
         scene.bind("keydown", self._handle_key_down)
 
@@ -67,11 +74,17 @@ class SimulationControls:
         self.simulation.set_days_per_second(int(event.value))
         self.speed_text.text = self._simulation_speed_label()
 
-    def _update_camera_focus(self, event) -> None:
+    def _select_camera_focus(self, event) -> None:
         """
-        Updates the camera focus based on the selected dropdown option.
+        Stores the selected camera focus option without applying it immediately.
         """
-        selected_name = event.selected
+        self.selected_camera_focus_name = event.selected
+
+    def _apply_camera_focus(self, _event=None) -> None:
+        """
+        Applies the selected camera focus option.
+        """
+        selected_name = self.selected_camera_focus_name
 
         if selected_name == "Center":
             self.simulation.set_camera_focus_body(None)
@@ -83,16 +96,13 @@ class SimulationControls:
         self.simulation.set_camera_focus_body(selected_body)
 
     def _handle_key_down(self, event) -> None:
-        """
-        Toggles pause when the space bar is pressed.
-        """
-        key = str(event.key)
+        key = str(event.key).lower()
 
         if key == " ":
             self._toggle_pause()
 
     def _simulation_speed_label(self) -> str:
-        return f"{self.simulation.days_per_second} " "simulated day(s) per second"
+        return f"{self.simulation.days_per_second} simulated day(s) per second"
 
     def _get_camera_focus_choices(self) -> list[str]:
         return ["Center"] + [body.name for body in self.simulation.bodies]
