@@ -22,9 +22,9 @@ from config.constants import (
 
 
 class CelestialBodyType(Enum):
-    STAR = "star"
-    PLANET = "planet"
-    MOON = "moon"
+    STAR = "Star"
+    PLANET = "Planet"
+    MOON = "Moon"
 
 
 class CelestialBody:
