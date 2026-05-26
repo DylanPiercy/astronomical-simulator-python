@@ -13,6 +13,7 @@ class BodyLabel:
     def __init__(self, bodies):
         self.bodies = bodies
         self.pinned_labels = {}
+        self.hovered_body = None
 
         self.hover_label = label(
             pos=vector(0, 0, 0),
@@ -34,9 +35,9 @@ class BodyLabel:
 
     def handle_click(self) -> None:
         """
-        Pins or unpins a label for the clicked body.
+        Pins or unpins a label for the currently hovered body.
         """
-        clicked_body = self._get_body_from_object(scene.mouse.pick)
+        clicked_body = self.hovered_body
 
         if clicked_body is None:
             return
@@ -61,14 +62,14 @@ class BodyLabel:
         """
         Updates the temporary hover label.
         """
-        hovered_body = self._get_body_from_object(scene.mouse.pick)
+        self.hovered_body = self._get_body_from_object(scene.mouse.pick)
 
-        if hovered_body is None or hovered_body in self.pinned_labels:
+        if self.hovered_body is None or self.hovered_body in self.pinned_labels:
             self.hover_label.visible = False
             return
 
-        self.hover_label.pos = hovered_body.visual.pos
-        self.hover_label.text = self._build_label_text(hovered_body)
+        self.hover_label.pos = self.hovered_body.visual.pos
+        self.hover_label.text = self._build_label_text(self.hovered_body)
         self.hover_label.visible = True
 
     def _update_pinned_labels(self) -> None:
