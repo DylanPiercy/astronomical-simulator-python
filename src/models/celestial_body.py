@@ -3,9 +3,12 @@ Celestial body model used to represent stars, planets, moons, and other astronom
 """
 
 from enum import Enum
+from typing import Optional
+
 from vpython import sphere, vector
 
 from config.constants import (
+    ARTISTIC_MOON_DISTANCE_SCALE,
     DISTANCE_SCALE,
     STAR_RADIUS_SCALE,
     PLANET_RADIUS_SCALE,
@@ -45,6 +48,7 @@ class CelestialBody:
         velocity: vector,
         colour: vector,
         make_trail: bool,
+        parent_body: Optional["CelestialBody"] = None,
     ):
         self.type = type
         self.name = name
@@ -54,6 +58,7 @@ class CelestialBody:
         self.velocity = velocity
         self.colour = colour
         self.make_trail = make_trail
+        self.parent_body = parent_body
 
         if self.type == CelestialBodyType.STAR:
             visual_radius = radius * STAR_RADIUS_SCALE
@@ -71,7 +76,7 @@ class CelestialBody:
             raise ValueError(f"Invalid celestial body type: {self.type}")
 
         self.visual = sphere(
-            pos=self.position * DISTANCE_SCALE,
+            pos=self._get_visual_position(),
             radius=visual_radius,
             color=self.colour,
             make_trail=self.make_trail,
@@ -83,4 +88,17 @@ class CelestialBody:
         """
         Updates the VPython sphere position to match the body's physical position.
         """
-        self.visual.pos = self.position * DISTANCE_SCALE
+        self.visual.pos = self._get_visual_position()
+
+    def _get_visual_position(self) -> vector:
+        """
+        Returns the scaled visual position for the body.
+        """
+        if self.type == CelestialBodyType.MOON and self.parent_body is not None:
+            moon_offset_from_parent = self.position - self.parent_body.position
+            return (
+                self.parent_body.visual.pos
+                + moon_offset_from_parent * ARTISTIC_MOON_DISTANCE_SCALE
+            )
+
+        return self.position * DISTANCE_SCALE

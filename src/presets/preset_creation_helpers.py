@@ -79,4 +79,5 @@ def create_moon(
         ),
         colour=colour,
         make_trail=True,
+        parent_body=parent_body,
     )

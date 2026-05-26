@@ -122,4 +122,4 @@ class Simulation:
             scene.center = vector(0, 0, 0)
             return
 
-        scene.center = self.camera_focus_body.position * DISTANCE_SCALE
+        scene.center = self.camera_focus_body.visual.pos
