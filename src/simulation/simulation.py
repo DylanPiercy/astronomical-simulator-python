@@ -30,6 +30,8 @@ class Simulation:
         self.camera_focus_body: Optional[CelestialBody] = None
         self.body_hover_label = BodyHoverLabel(self.bodies)
 
+        scene.bind("click", self._handle_scene_click)
+
     def run(self) -> None:
         """
         Starts the simulation loop.
@@ -59,6 +61,12 @@ class Simulation:
         If body is None, the camera focuses on the system center.
         """
         self.camera_focus_body = body
+
+    def _handle_scene_click(self, _event=None) -> None:
+        """
+        Handles clicking bodies to pin or unpin labels.
+        """
+        self.body_hover_label.handle_click()
 
     def _get_time_step(self) -> float:
         return SECONDS_IN_DAY * self.days_per_second / RENDER_RATE
