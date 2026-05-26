@@ -2,13 +2,17 @@
 Simulation runner for the astronomical simulator.
 """
 
-from vpython import rate
+from typing import Optional
+
+from vpython import rate, scene, vector
 
 from config.constants import (
     DEFAULT_DAYS_PER_SECOND,
+    DISTANCE_SCALE,
     RENDER_RATE,
     SECONDS_IN_DAY,
 )
+from models.celestial_body import CelestialBody
 from physics.physics_engine import PhysicsEngine
 
 
@@ -22,6 +26,7 @@ class Simulation:
         self.physics_engine = PhysicsEngine()
         self.is_paused = False
         self.days_per_second = DEFAULT_DAYS_PER_SECOND
+        self.camera_focus_body: Optional[CelestialBody] = None
 
     def run(self) -> None:
         """
@@ -33,6 +38,8 @@ class Simulation:
             if not self.is_paused:
                 self._update_bodies()
 
+            self._update_camera_focus()
+
     def toggle_pause(self) -> None:
         self.is_paused = not self.is_paused
 
@@ -41,6 +48,14 @@ class Simulation:
         days_per_second: int,
     ) -> None:
         self.days_per_second = days_per_second
+
+    def set_camera_focus_body(self, body: Optional[CelestialBody]) -> None:
+        """
+        Sets the body the camera should follow.
+
+        If body is None, the camera focuses on the system center.
+        """
+        self.camera_focus_body = body
 
     def _get_time_step(self) -> float:
         return SECONDS_IN_DAY * self.days_per_second / RENDER_RATE
@@ -87,3 +102,13 @@ class Simulation:
                 total_acceleration += acceleration
 
         return total_acceleration
+
+    def _update_camera_focus(self) -> None:
+        """
+        Updates the camera center to follow the selected body.
+        """
+        if self.camera_focus_body is None:
+            scene.center = vector(0, 0, 0)
+            return
+
+        scene.center = self.camera_focus_body.position * DISTANCE_SCALE

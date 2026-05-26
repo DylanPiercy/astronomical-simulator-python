@@ -4,7 +4,7 @@ VPython UI controls for the astronomical simulator.
 
 from typing import Any
 
-from vpython import button, scene, slider, wtext
+from vpython import button, menu, scene, slider, wtext
 
 from config.constants import (
     DEFAULT_DAYS_PER_SECOND,
@@ -15,13 +15,14 @@ from config.constants import (
 
 class SimulationControls:
     """
-    Creates UI controls for pausing and changing simulation speed.
+    Creates UI controls for pausing, changing simulation speed, and camera focus.
     """
 
     def __init__(self, simulation):
         self.simulation = simulation
         self.pause_button: Any = None
         self.speed_text: Any = None
+        self.camera_focus_menu: Any = None
 
     def setup(self) -> None:
         """
@@ -44,6 +45,14 @@ class SimulationControls:
         scene.append_to_caption("  ")
         self.speed_text = wtext(text=self._simulation_speed_label())
 
+        scene.append_to_caption("\nCamera focus: ")
+
+        self.camera_focus_menu = menu(
+            choices=self._get_camera_focus_choices(),
+            selected="Center",
+            bind=self._update_camera_focus,
+        )
+
         scene.append_to_caption(
             "\nControls: click the scene once, then press Space to pause/resume."
         )
@@ -58,6 +67,21 @@ class SimulationControls:
         self.simulation.set_days_per_second(int(event.value))
         self.speed_text.text = self._simulation_speed_label()
 
+    def _update_camera_focus(self, event) -> None:
+        """
+        Updates the camera focus based on the selected dropdown option.
+        """
+        selected_name = event.selected
+
+        if selected_name == "Center":
+            self.simulation.set_camera_focus_body(None)
+            return
+
+        selected_body = next(
+            body for body in self.simulation.bodies if body.name == selected_name
+        )
+        self.simulation.set_camera_focus_body(selected_body)
+
     def _handle_key_down(self, event) -> None:
         """
         Toggles pause when the space bar is pressed.
@@ -69,3 +93,6 @@ class SimulationControls:
 
     def _simulation_speed_label(self) -> str:
         return f"{self.simulation.days_per_second} " "simulated day(s) per second"
+
+    def _get_camera_focus_choices(self) -> list[str]:
+        return ["Center"] + [body.name for body in self.simulation.bodies]
