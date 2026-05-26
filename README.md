@@ -11,6 +11,8 @@
     - [Project Setup](#project-setup)
         - [Prerequisites](#prerequisites)
         - [Setup Virtual Environment](#setup-virtual-environment)
+    - [Git Commit Types](#git-commit-types)
+    - [Known Bugs](#known-bugs)
 
 ---
 
@@ -64,7 +66,7 @@ pip install -r requirements.txt
 
 ---
 
-## Commit Types
+## Git Commit Types
 
 | Type       | Description                                                                 |
 |------------|-----------------------------------------------------------------------------|
@@ -81,5 +83,11 @@ pip install -r requirements.txt
 | `struct`   | Changes to **project structure** (e.g., file reorganisation).               |
 | `test`     | Adds or updates codebase **tests**.                                         |
 | `temp`     | A **temporary** change to the code.                                         |
+
+---
+
+## Known Bugs
+
+- The simulation speed slider displays an inaccurate “simulated days per second” value while it is being dragged. The displayed value is usually off by ±1, but can be further out during fast or large slider movements. Once the slider is released, the correct value is displayed.
 
 ---
