@@ -9,16 +9,13 @@ from vpython import sphere, vector
 
 from config.constants import (
     ARTISTIC_MOON_DISTANCE_SCALE,
+    ARTISTIC_RADIUS_SCALE,
     DISTANCE_SCALE,
-    STAR_RADIUS_SCALE,
-    PLANET_RADIUS_SCALE,
-    MOON_RADIUS_SCALE,
-    MIN_PLANET_RADIUS_SCALE,
-    MIN_MOON_RADIUS_SCALE,
-    PLANET_TRAIL_MAX_LENGTH,
     MOON_TRAIL_MAX_LENGTH,
-    PLANET_TRAIL_MAX_WIDTH,
     MOON_TRAIL_MAX_WIDTH,
+    PLANET_TRAIL_MAX_LENGTH,
+    PLANET_TRAIL_MAX_WIDTH,
+    RADIUS_SCALE,
     STAR_TRAIL_MAX_LENGTH,
     STAR_TRAIL_MAX_WIDTH,
 )
@@ -28,6 +25,11 @@ class CelestialBodyType(Enum):
     STAR = "Star"
     PLANET = "Planet"
     MOON = "Moon"
+
+
+class VisualScalingMode(Enum):
+    REALISTIC = "Realistic"
+    ARTISTIC = "Artistic"
 
 
 class CelestialBody:
@@ -49,6 +51,7 @@ class CelestialBody:
         colour: vector,
         make_trail: bool,
         parent_body: Optional["CelestialBody"] = None,
+        visual_scaling_mode: VisualScalingMode = VisualScalingMode.ARTISTIC,
     ):
         self.type = type
         self.name = name
@@ -59,25 +62,13 @@ class CelestialBody:
         self.colour = colour
         self.make_trail = make_trail
         self.parent_body = parent_body
+        self.visual_scaling_mode = visual_scaling_mode
 
-        if self.type == CelestialBodyType.STAR:
-            visual_radius = radius * STAR_RADIUS_SCALE
-            trail_length = STAR_TRAIL_MAX_LENGTH if self.make_trail else 0
-            trail_width = STAR_TRAIL_MAX_WIDTH if self.make_trail else 0
-        elif self.type == CelestialBodyType.PLANET:
-            visual_radius = max(radius * PLANET_RADIUS_SCALE, MIN_PLANET_RADIUS_SCALE)
-            trail_length = PLANET_TRAIL_MAX_LENGTH if self.make_trail else 0
-            trail_width = PLANET_TRAIL_MAX_WIDTH if self.make_trail else 0
-        elif self.type == CelestialBodyType.MOON:
-            visual_radius = max(radius * MOON_RADIUS_SCALE, MIN_MOON_RADIUS_SCALE)
-            trail_length = MOON_TRAIL_MAX_LENGTH if self.make_trail else 0
-            trail_width = MOON_TRAIL_MAX_WIDTH if self.make_trail else 0
-        else:
-            raise ValueError(f"Invalid celestial body type: {self.type}")
+        trail_length, trail_width = self._get_trail_settings()
 
         self.visual = sphere(
             pos=self._get_visual_position(),
-            radius=visual_radius,
+            radius=self._get_visual_radius(),
             color=self.colour,
             make_trail=self.make_trail,
             retain=trail_length,
@@ -90,15 +81,58 @@ class CelestialBody:
         """
         self.visual.pos = self._get_visual_position()
 
+    def set_visual_scaling_mode(self, visual_scaling_mode: VisualScalingMode) -> None:
+        """
+        Updates the body's visual scaling mode.
+        """
+        self.visual_scaling_mode = visual_scaling_mode
+        self.visual.radius = self._get_visual_radius()
+        self.visual.pos = self._get_visual_position()
+
+    def _get_visual_radius(self) -> float:
+        """
+        Returns the scaled visual radius for the current scaling mode.
+        """
+        if self.visual_scaling_mode == VisualScalingMode.REALISTIC:
+            return self.radius * RADIUS_SCALE
+
+        return self.radius * ARTISTIC_RADIUS_SCALE
+
     def _get_visual_position(self) -> vector:
         """
         Returns the scaled visual position for the body.
         """
         if self.type == CelestialBodyType.MOON and self.parent_body is not None:
             moon_offset_from_parent = self.position - self.parent_body.position
-            return (
-                self.parent_body.visual.pos
-                + moon_offset_from_parent * ARTISTIC_MOON_DISTANCE_SCALE
-            )
+            moon_distance_scale = self._get_moon_distance_scale()
+
+            return self.parent_body.visual.pos + moon_offset_from_parent * moon_distance_scale
 
         return self.position * DISTANCE_SCALE
+
+    def _get_moon_distance_scale(self) -> float:
+        """
+        Returns the moon distance scale for the current visual scaling mode.
+        """
+        if self.visual_scaling_mode == VisualScalingMode.REALISTIC:
+            return DISTANCE_SCALE
+
+        return ARTISTIC_MOON_DISTANCE_SCALE
+
+    def _get_trail_settings(self) -> tuple[int, float]:
+        """
+        Returns trail length and width for this body.
+        """
+        if not self.make_trail:
+            return 0, 0
+
+        if self.type == CelestialBodyType.STAR:
+            return STAR_TRAIL_MAX_LENGTH, STAR_TRAIL_MAX_WIDTH
+
+        if self.type == CelestialBodyType.PLANET:
+            return PLANET_TRAIL_MAX_LENGTH, PLANET_TRAIL_MAX_WIDTH
+
+        if self.type == CelestialBodyType.MOON:
+            return MOON_TRAIL_MAX_LENGTH, MOON_TRAIL_MAX_WIDTH
+
+        raise ValueError(f"Invalid celestial body type: {self.type}")

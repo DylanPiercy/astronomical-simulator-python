@@ -8,11 +8,10 @@ from vpython import rate, scene, vector
 
 from config.constants import (
     DEFAULT_DAYS_PER_SECOND,
-    DISTANCE_SCALE,
     RENDER_RATE,
     SECONDS_IN_DAY,
 )
-from models.celestial_body import CelestialBody
+from models.celestial_body import CelestialBody, VisualScalingMode
 from physics.physics_engine import PhysicsEngine
 from ui.body_label import BodyLabel
 
@@ -28,6 +27,7 @@ class Simulation:
         self.is_paused = False
         self.days_per_second = DEFAULT_DAYS_PER_SECOND
         self.camera_focus_body: Optional[CelestialBody] = None
+        self.visual_scaling_mode = VisualScalingMode.ARTISTIC
         self.body_hover_label = BodyLabel(self.bodies)
 
         scene.bind("click", self._handle_scene_click)
@@ -61,6 +61,12 @@ class Simulation:
         If body is None, the camera focuses on the system center.
         """
         self.camera_focus_body = body
+
+    def set_visual_scaling_mode(self, visual_scaling_mode: VisualScalingMode) -> None:
+        self.visual_scaling_mode = visual_scaling_mode
+
+        for body in self.bodies:
+            body.set_visual_scaling_mode(visual_scaling_mode)
 
     def _handle_scene_click(self, _event=None) -> None:
         """
