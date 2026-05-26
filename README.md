@@ -90,4 +90,6 @@ pip install -r requirements.txt
 
 - The simulation speed slider displays an inaccurate “simulated days per second” value while it is being dragged. The displayed value is usually off by ±1, but can be further out during fast or large slider movements. Once the slider is released, the correct value is displayed.
 
+- Using the 'SPACE' key to pause and resume the animation is unreliable and does not work on every launch of the application.
+
 ---
