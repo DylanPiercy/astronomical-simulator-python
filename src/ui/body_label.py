@@ -5,7 +5,7 @@ Hover and pinned label UI for celestial bodies.
 from vpython import label, mag, scene, vector
 
 
-class BodyHoverLabel:
+class BodyLabel:
     """
     Displays hover labels and pinned labels for celestial bodies.
     """

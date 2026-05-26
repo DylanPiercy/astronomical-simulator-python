@@ -14,7 +14,7 @@ from config.constants import (
 )
 from models.celestial_body import CelestialBody
 from physics.physics_engine import PhysicsEngine
-from ui.body_hover_label import BodyHoverLabel
+from ui.body_label import BodyLabel
 
 
 class Simulation:
@@ -28,7 +28,7 @@ class Simulation:
         self.is_paused = False
         self.days_per_second = DEFAULT_DAYS_PER_SECOND
         self.camera_focus_body: Optional[CelestialBody] = None
-        self.body_hover_label = BodyHoverLabel(self.bodies)
+        self.body_hover_label = BodyLabel(self.bodies)
 
         scene.bind("click", self._handle_scene_click)
 
