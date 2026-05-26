@@ -3,9 +3,9 @@ Celestial body model used to represent stars, planets, moons, and other astronom
 """
 
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional
 
-from vpython import sphere, vector
+from vpython import curve, sphere, vector
 
 from config.constants import (
     ARTISTIC_MOON_DISTANCE_SCALE,
@@ -18,6 +18,7 @@ from config.constants import (
     RADIUS_SCALE,
     STAR_TRAIL_MAX_LENGTH,
     STAR_TRAIL_MAX_WIDTH,
+    TRAIL_GAP_POINTS,
 )
 
 
@@ -63,17 +64,18 @@ class CelestialBody:
         self.make_trail = make_trail
         self.parent_body = parent_body
         self.visual_scaling_mode = visual_scaling_mode
-        self.trails_enabled = make_trail
 
-        trail_length, trail_width = self._get_trail_settings()
+        self.trails_enabled = make_trail
+        self.trail_max_length, self.trail_width = self._get_trail_settings()
+        self.trail_recent_positions = []
+        self.trail_positions = []
+        self.trail: Any = self._create_trail()
 
         self.visual = sphere(
             pos=self._get_visual_position(),
             radius=self._get_visual_radius(),
             color=self.colour,
-            make_trail=self.trails_enabled,
-            retain=trail_length,
-            trail_radius=trail_width,
+            make_trail=False,
         )
 
     def update_visual_position(self) -> None:
@@ -81,6 +83,7 @@ class CelestialBody:
         Updates the VPython sphere position to match the body's physical position.
         """
         self.visual.pos = self._get_visual_position()
+        self._update_trail()
 
     def set_visual_scaling_mode(self, visual_scaling_mode: VisualScalingMode) -> None:
         """
@@ -89,11 +92,16 @@ class CelestialBody:
         self.visual_scaling_mode = visual_scaling_mode
         self.visual.radius = self._get_visual_radius()
         self.visual.pos = self._get_visual_position()
+        self._clear_trail()
 
     def set_trails_enabled(self, trails_enabled: bool) -> None:
+        """
+        Enables or disables this body's custom trail.
+        """
         self.trails_enabled = trails_enabled and self.make_trail
-        self.visual.make_trail = self.trails_enabled
-        self.visual.clear_trail()
+
+        if not self.trails_enabled:
+            self._clear_trail()
 
     def _get_visual_radius(self) -> float:
         """
@@ -145,3 +153,63 @@ class CelestialBody:
             return MOON_TRAIL_MAX_LENGTH, MOON_TRAIL_MAX_WIDTH
 
         raise ValueError(f"Invalid celestial body type: {self.type}")
+
+    def _create_trail(self):
+        """
+        Creates the custom trail curve.
+        """
+        if not self.make_trail:
+            return None
+
+        return curve(
+            color=self.colour,
+            radius=self.trail_width,
+        )
+
+    def _update_trail(self) -> None:
+        """
+        Updates the custom trail while leaving a gap behind the body.
+        """
+        if not self.trails_enabled or self.trail is None:
+            return
+
+        self.trail_recent_positions.append(self._copy_position(self.visual.pos))
+
+        if len(self.trail_recent_positions) <= TRAIL_GAP_POINTS:
+            return
+
+        trail_position = self.trail_recent_positions.pop(0)
+        self.trail_positions.append(trail_position)
+        self.trail.append(pos=trail_position)
+
+        if len(self.trail_positions) > self.trail_max_length:
+            self.trail_positions.pop(0)
+            self._rebuild_trail()
+
+    def _rebuild_trail(self) -> None:
+        """
+        Rebuilds the trail after old points are removed.
+        """
+        if self.trail is None:
+            return
+
+        self.trail.clear()
+
+        for trail_position in self.trail_positions:
+            self.trail.append(pos=trail_position)
+
+    def _clear_trail(self) -> None:
+        """
+        Clears stored and rendered trail positions.
+        """
+        self.trail_recent_positions.clear()
+        self.trail_positions.clear()
+
+        if self.trail is not None:
+            self.trail.clear()
+
+    def _copy_position(self, position: vector) -> vector:
+        """
+        Returns a detached copy of a VPython vector position.
+        """
+        return vector(position.x, position.y, position.z)
