@@ -28,6 +28,7 @@ class Simulation:
         self.days_per_second = DEFAULT_DAYS_PER_SECOND
         self.camera_focus_body: Optional[CelestialBody] = None
         self.visual_scaling_mode = VisualScalingMode.ARTISTIC
+        self.trails_enabled = True
         self.body_hover_label = BodyLabel(self.bodies)
 
         scene.bind("click", self._handle_scene_click)
@@ -67,6 +68,12 @@ class Simulation:
 
         for body in self.bodies:
             body.set_visual_scaling_mode(visual_scaling_mode)
+
+    def set_trails_enabled(self, trails_enabled: bool) -> None:
+        self.trails_enabled = trails_enabled
+
+        for body in self.bodies:
+            body.set_trails_enabled(trails_enabled)
 
     def _handle_scene_click(self, _event=None) -> None:
         """

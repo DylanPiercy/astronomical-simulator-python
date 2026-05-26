@@ -63,6 +63,7 @@ class CelestialBody:
         self.make_trail = make_trail
         self.parent_body = parent_body
         self.visual_scaling_mode = visual_scaling_mode
+        self.trails_enabled = make_trail
 
         trail_length, trail_width = self._get_trail_settings()
 
@@ -70,7 +71,7 @@ class CelestialBody:
             pos=self._get_visual_position(),
             radius=self._get_visual_radius(),
             color=self.colour,
-            make_trail=self.make_trail,
+            make_trail=self.trails_enabled,
             retain=trail_length,
             trail_radius=trail_width,
         )
@@ -88,6 +89,11 @@ class CelestialBody:
         self.visual_scaling_mode = visual_scaling_mode
         self.visual.radius = self._get_visual_radius()
         self.visual.pos = self._get_visual_position()
+
+    def set_trails_enabled(self, trails_enabled: bool) -> None:
+        self.trails_enabled = trails_enabled and self.make_trail
+        self.visual.make_trail = self.trails_enabled
+        self.visual.clear_trail()
 
     def _get_visual_radius(self) -> float:
         """

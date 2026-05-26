@@ -17,7 +17,7 @@ from models.celestial_body import VisualScalingMode
 class SimulationControls:
     """
     Creates UI controls for pausing, changing simulation speed, camera focus,
-    and visual scaling.
+    visual scaling, and trails.
     """
 
     def __init__(self, simulation):
@@ -26,6 +26,8 @@ class SimulationControls:
         self.speed_text: Any = None
         self.scaling_button: Any = None
         self.scaling_text: Any = None
+        self.trail_button: Any = None
+        self.trail_text: Any = None
         self.camera_focus_menu: Any = None
         self.camera_focus_button: Any = None
         self.selected_camera_focus_name = "Center"
@@ -59,6 +61,16 @@ class SimulationControls:
         self.scaling_button = button(
             text="Switch to realistic",
             bind=self._toggle_visual_scaling,
+        )
+
+        scene.append_to_caption("\nTrails: ")
+        self.trail_text = wtext(text=self._trail_label())
+
+        scene.append_to_caption(" ")
+
+        self.trail_button = button(
+            text="Hide trails",
+            bind=self._toggle_trails,
         )
 
         scene.append_to_caption("\nCamera focus: ")
@@ -101,6 +113,13 @@ class SimulationControls:
 
         self.scaling_text.text = self._visual_scaling_label()
 
+    def _toggle_trails(self, _event=None) -> None:
+        trails_enabled = not self.simulation.trails_enabled
+        self.simulation.set_trails_enabled(trails_enabled)
+
+        self.trail_button.text = "Hide trails" if trails_enabled else "Show trails"
+        self.trail_text.text = self._trail_label()
+
     def _select_camera_focus(self, event) -> None:
         """
         Stores the selected camera focus option without applying it immediately.
@@ -133,6 +152,9 @@ class SimulationControls:
 
     def _visual_scaling_label(self) -> str:
         return self.simulation.visual_scaling_mode.value
+
+    def _trail_label(self) -> str:
+        return "On" if self.simulation.trails_enabled else "Off"
 
     def _get_camera_focus_choices(self) -> list[str]:
         return ["Center"] + [body.name for body in self.simulation.bodies]
