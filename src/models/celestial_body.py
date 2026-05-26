@@ -106,7 +106,10 @@ class CelestialBody:
             moon_offset_from_parent = self.position - self.parent_body.position
             moon_distance_scale = self._get_moon_distance_scale()
 
-            return self.parent_body.visual.pos + moon_offset_from_parent * moon_distance_scale
+            return (
+                self.parent_body.visual.pos
+                + moon_offset_from_parent * moon_distance_scale
+            )
 
         return self.position * DISTANCE_SCALE
 
