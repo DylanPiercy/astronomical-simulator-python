@@ -16,9 +16,11 @@ from config.constants import (
     PLANET_TRAIL_MAX_LENGTH,
     PLANET_TRAIL_MAX_WIDTH,
     RADIUS_SCALE,
+    SECONDS_IN_DAY,
     STAR_TRAIL_MAX_LENGTH,
     STAR_TRAIL_MAX_WIDTH,
     TRAIL_GAP_POINTS,
+    TRAIL_POINTS_PER_SIMULATED_DAY,
 )
 
 
@@ -66,6 +68,7 @@ class CelestialBody:
         self.visual_scaling_mode = visual_scaling_mode
 
         self.trails_enabled = make_trail
+        self.simulated_seconds_since_last_trail_point = 0
         self.trail_max_length, self.trail_width = self._get_trail_settings()
         self.trail_recent_positions = []
         self.trail_positions = []
@@ -78,12 +81,12 @@ class CelestialBody:
             make_trail=False,
         )
 
-    def update_visual_position(self) -> None:
+    def update_visual_position(self, time_step: float = 0) -> None:
         """
         Updates the VPython sphere position to match the body's physical position.
         """
         self.visual.pos = self._get_visual_position()
-        self._update_trail()
+        self._update_trail(time_step)
 
     def set_visual_scaling_mode(self, visual_scaling_mode: VisualScalingMode) -> None:
         """
@@ -166,13 +169,20 @@ class CelestialBody:
             radius=self.trail_width,
         )
 
-    def _update_trail(self) -> None:
+    def _update_trail(self, time_step: float) -> None:
         """
-        Updates the custom trail while leaving a gap behind the body.
+        Adds trail points based on simulated time, leaving a gap behind the body.
         """
         if not self.trails_enabled or self.trail is None:
             return
 
+        trail_point_interval = SECONDS_IN_DAY / TRAIL_POINTS_PER_SIMULATED_DAY
+        self.simulated_seconds_since_last_trail_point += time_step
+
+        if self.simulated_seconds_since_last_trail_point < trail_point_interval:
+            return
+
+        self.simulated_seconds_since_last_trail_point -= trail_point_interval
         self.trail_recent_positions.append(self._copy_position(self.visual.pos))
 
         if len(self.trail_recent_positions) <= TRAIL_GAP_POINTS:
@@ -202,6 +212,7 @@ class CelestialBody:
         """
         Clears stored and rendered trail positions.
         """
+        self.simulated_seconds_since_last_trail_point = 0
         self.trail_recent_positions.clear()
         self.trail_positions.clear()
 

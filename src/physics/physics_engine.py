@@ -41,4 +41,4 @@ class PhysicsEngine:
         Updates a body's position using velocity and time step.
         """
         body.position += body.velocity * time_step
-        body.update_visual_position()
+        body.update_visual_position(time_step)
