@@ -190,7 +190,7 @@ def create_local_system() -> SolarSystem:
     )
 
     pluto = create_orbiting_body_from_state_vector(
-        type=CelestialBodyType.PLANET,
+        type=CelestialBodyType.DWARF_PLANET,
         name=PLUTO,
         mass=PLUTO_MASS,
         radius=PLUTO_RADIUS,

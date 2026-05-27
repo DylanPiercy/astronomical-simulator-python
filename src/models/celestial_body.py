@@ -23,13 +23,17 @@ from config.constants import (
     TRAIL_GAP_POINTS,
     TRAIL_ORBIT_FRACTION,
     TRAIL_POINTS_PER_SIMULATED_DAY,
+    ASTERIOD_COMET_TRAIL_MARKER_RADIUS,
 )
 
 
 class CelestialBodyType(Enum):
     STAR = "Star"
     PLANET = "Planet"
+    DWARF_PLANET = "Dwarf planet"
     MOON = "Moon"
+    ASTEROID = "Asteroid"
+    COMET = "Comet"
 
 
 class VisualScalingMode(Enum):
@@ -182,11 +186,19 @@ class CelestialBody:
         if self.type == CelestialBodyType.STAR:
             return STAR_TRAIL_MARKER_RADIUS
 
-        if self.type == CelestialBodyType.PLANET:
+        if self.type in {
+            CelestialBodyType.PLANET,
+            CelestialBodyType.DWARF_PLANET,
+        }:
             return PLANET_TRAIL_MARKER_RADIUS
 
         if self.type == CelestialBodyType.MOON:
             return MOON_TRAIL_MARKER_RADIUS
+        
+        if self.type in {
+            CelestialBodyType.ASTEROID,
+            CelestialBodyType.COMET,
+        }: return ASTERIOD_COMET_TRAIL_MARKER_RADIUS
 
         raise ValueError(f"Invalid celestial body type: {self.type}")
 
