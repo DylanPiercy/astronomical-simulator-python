@@ -71,6 +71,8 @@ class CelestialBody:
 
         self.trails_enabled = make_trail
         self.simulated_seconds_since_last_trail_point = 0
+        self.previous_visual_position = None
+
         self.trail_marker_count, self.base_trail_marker_radius = (
             self._get_trail_settings()
         )
@@ -87,12 +89,25 @@ class CelestialBody:
             make_trail=False,
         )
 
+        self.previous_visual_position = self._copy_position(self.visual.pos)
+
     def update_visual_position(self, time_step: float = 0) -> None:
         """
         Updates the VPython sphere position to match the body's physical position.
         """
+        old_visual_position = self._copy_position(self.visual.pos)
+
         self.visual.pos = self._get_visual_position()
-        self._update_trail(time_step)
+
+        new_visual_position = self._copy_position(self.visual.pos)
+
+        self._update_trail(
+            time_step=time_step,
+            old_visual_position=old_visual_position,
+            new_visual_position=new_visual_position,
+        )
+
+        self.previous_visual_position = new_visual_position
 
     def set_visual_scaling_mode(self, visual_scaling_mode: VisualScalingMode) -> None:
         """
@@ -101,6 +116,7 @@ class CelestialBody:
         self.visual_scaling_mode = visual_scaling_mode
         self.visual.radius = self._get_visual_radius()
         self.visual.pos = self._get_visual_position()
+        self.previous_visual_position = self._copy_position(self.visual.pos)
         self._clear_trail()
 
     def set_trails_enabled(self, trails_enabled: bool) -> None:
@@ -228,29 +244,53 @@ class CelestialBody:
     def _get_scaled_trail_marker_radius(self) -> float:
         return self.base_trail_marker_radius * self.trail_marker_radius_scale
 
-    def _update_trail(self, time_step: float) -> None:
+    def _update_trail(
+        self,
+        time_step: float,
+        old_visual_position: vector,
+        new_visual_position: vector,
+    ) -> None:
         """
-        Updates trail markers based on simulated time, leaving a gap behind the body.
+        Updates trail markers based on simulated time.
+
+        Trail sample positions are interpolated between the previous and current
+        visual position so marker spacing remains consistent at different speeds.
         """
-        if not self.make_trail or not self.trail_markers:
+        if not self.make_trail or not self.trail_markers or time_step <= 0:
             return
 
         trail_point_interval = SECONDS_IN_DAY / TRAIL_POINTS_PER_SIMULATED_DAY
         self.simulated_seconds_since_last_trail_point += time_step
 
-        if self.simulated_seconds_since_last_trail_point < trail_point_interval:
-            return
+        while self.simulated_seconds_since_last_trail_point >= trail_point_interval:
+            overshoot_seconds = (
+                self.simulated_seconds_since_last_trail_point - trail_point_interval
+            )
+            interpolation_ratio = 1 - (overshoot_seconds / time_step)
 
-        self.simulated_seconds_since_last_trail_point -= trail_point_interval
-        self.trail_recent_positions.append(self._copy_position(self.visual.pos))
+            interpolated_position = self._interpolate_position(
+                old_visual_position,
+                new_visual_position,
+                interpolation_ratio,
+            )
+
+            self._add_trail_sample(interpolated_position)
+
+            self.simulated_seconds_since_last_trail_point -= trail_point_interval
+
+    def _add_trail_sample(self, trail_position: vector) -> None:
+        """
+        Adds a sampled position to the trail, respecting the gap behind the body.
+        """
+        self.trail_recent_positions.append(trail_position)
 
         if len(self.trail_recent_positions) <= TRAIL_GAP_POINTS:
             return
 
-        trail_position = self.trail_recent_positions.pop(0)
+        visible_trail_position = self.trail_recent_positions.pop(0)
         trail_marker = self.trail_markers[self.next_trail_marker_index]
 
-        trail_marker.pos = trail_position
+        trail_marker.pos = visible_trail_position
         trail_marker.radius = self._get_scaled_trail_marker_radius()
         self.trail_marker_has_position[self.next_trail_marker_index] = True
         trail_marker.visible = self.trails_enabled
@@ -258,6 +298,19 @@ class CelestialBody:
         self.next_trail_marker_index = (self.next_trail_marker_index + 1) % len(
             self.trail_markers
         )
+
+    def _interpolate_position(
+        self,
+        start_position: vector,
+        end_position: vector,
+        interpolation_ratio: float,
+    ) -> vector:
+        """
+        Interpolates between two visual positions.
+        """
+        clamped_ratio = max(0, min(1, interpolation_ratio))
+
+        return start_position + (end_position - start_position) * clamped_ratio
 
     def _clear_trail(self) -> None:
         """
