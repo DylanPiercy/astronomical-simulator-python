@@ -2,7 +2,9 @@
 Hover and pinned label UI for celestial bodies.
 """
 
-from vpython import label, mag, scene, vector
+from vpython import label, scene, vector
+
+from physics.physics_diagnostics import PhysicsDiagnostics
 
 
 class BodyLabel:
@@ -14,6 +16,7 @@ class BodyLabel:
         self.bodies = bodies
         self.pinned_labels = {}
         self.hovered_body = None
+        self.physics_diagnostics = PhysicsDiagnostics()
 
         self.hover_label = label(
             pos=vector(0, 0, 0),
@@ -31,6 +34,9 @@ class BodyLabel:
         self._update_pinned_labels()
 
     def handle_click(self) -> None:
+        """
+        Pins or unpins a label for the currently hovered body.
+        """
         clicked_body = self.hovered_body
 
         if clicked_body is None:
@@ -69,6 +75,9 @@ class BodyLabel:
             pinned_label.text = self._build_label_text(body)
 
     def _get_body_from_object(self, picked_object):
+        """
+        Returns the celestial body matching the picked VPython object.
+        """
         for body in self.bodies:
             if body.visual == picked_object:
                 return body
@@ -76,7 +85,7 @@ class BodyLabel:
         return None
 
     def _build_label_text(self, body) -> str:
-        speed = mag(body.velocity)
+        diagnostics = self.physics_diagnostics.calculate_body_snapshot(body)
 
         label_lines = [
             body.name,
@@ -84,19 +93,19 @@ class BodyLabel:
         ]
 
         if body.parent_body is not None:
-            parent_distance = mag(body.position - body.parent_body.position)
-
             label_lines.extend(
                 [
                     f"Parent: {body.parent_body.name}",
-                    f"Distance from parent: {parent_distance:.3e} m",
+                    f"Distance from parent: {diagnostics.parent_distance:.3e} m",
                 ]
             )
 
         label_lines.extend(
             [
-                f"Speed: {speed:,.0f} m/s",
+                f"Speed: {diagnostics.speed:,.0f} m/s",
                 f"Velocity: {self._format_vector(body.velocity)} m/s",
+                f"Kinetic energy: {diagnostics.kinetic_energy:.3e} J",
+                f"Momentum: {diagnostics.linear_momentum_magnitude:.3e} kg m/s",
                 f"Mass: {body.mass:.3e} kg",
                 f"Radius: {body.radius:,.0f} m",
             ]
@@ -105,4 +114,7 @@ class BodyLabel:
         return "\n".join(label_lines)
 
     def _format_vector(self, value: vector) -> str:
+        """
+        Formats a VPython vector for display.
+        """
         return f"({value.x:.3e}, {value.y:.3e}, {value.z:.3e})"
