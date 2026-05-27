@@ -72,6 +72,7 @@ class CelestialBody:
         self.trail_max_length, self.trail_marker_radius = self._get_trail_settings()
         self.trail_recent_positions = []
         self.trail_markers = self._create_trail_markers()
+        self.trail_marker_has_position = [False for _ in self.trail_markers]
         self.next_trail_marker_index = 0
 
         self.visual = sphere(
@@ -98,18 +99,12 @@ class CelestialBody:
         self._clear_trail()
 
     def set_trails_enabled(self, trails_enabled: bool) -> None:
-        """
-        Enables or disables this body's trail markers.
-        """
         self.trails_enabled = trails_enabled and self.make_trail
 
-        if not self.trails_enabled:
-            self._hide_trail_markers()
+        for index, marker in enumerate(self.trail_markers):
+            marker.visible = self.trails_enabled and self.trail_marker_has_position[index]
 
     def _get_visual_radius(self) -> float:
-        """
-        Returns the scaled visual radius for the current scaling mode.
-        """
         if self.visual_scaling_mode == VisualScalingMode.REALISTIC:
             return self.radius * RADIUS_SCALE
 
@@ -131,9 +126,6 @@ class CelestialBody:
         return self.position * DISTANCE_SCALE
 
     def _get_moon_distance_scale(self) -> float:
-        """
-        Returns the moon distance scale for the current visual scaling mode.
-        """
         if self.visual_scaling_mode == VisualScalingMode.REALISTIC:
             return DISTANCE_SCALE
 
@@ -179,7 +171,7 @@ class CelestialBody:
         """
         Updates trail markers based on simulated time, leaving a gap behind the body.
         """
-        if not self.trails_enabled or not self.trail_markers:
+        if not self.make_trail or not self.trail_markers:
             return
 
         trail_point_interval = SECONDS_IN_DAY / TRAIL_POINTS_PER_SIMULATED_DAY
@@ -198,7 +190,8 @@ class CelestialBody:
         trail_marker = self.trail_markers[self.next_trail_marker_index]
 
         trail_marker.pos = trail_position
-        trail_marker.visible = True
+        self.trail_marker_has_position[self.next_trail_marker_index] = True
+        trail_marker.visible = self.trails_enabled
 
         self.next_trail_marker_index = (self.next_trail_marker_index + 1) % len(
             self.trail_markers
@@ -211,6 +204,7 @@ class CelestialBody:
         self.simulated_seconds_since_last_trail_point = 0
         self.trail_recent_positions.clear()
         self.next_trail_marker_index = 0
+        self.trail_marker_has_position = [False for _ in self.trail_markers]
         self._hide_trail_markers()
 
     def _hide_trail_markers(self) -> None:
