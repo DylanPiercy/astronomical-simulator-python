@@ -28,6 +28,7 @@ def create_star(
         make_trail=True,
     )
 
+
 def create_orbiting_body_from_state_vector(
     type: CelestialBodyType,
     name: str,

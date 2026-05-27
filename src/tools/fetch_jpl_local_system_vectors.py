@@ -16,8 +16,9 @@ import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
 
-
-OUTPUT_FILE = Path(__file__).resolve().parents[1] / "config" / "local_system_state_vectors.py"
+OUTPUT_FILE = (
+    Path(__file__).resolve().parents[1] / "config" / "local_system_state_vectors.py"
+)
 
 EPOCH_START = "2026-Jan-01 00:00"
 EPOCH_STOP = "2026-Jan-02 00:00"
@@ -117,7 +118,9 @@ def extract_vector(
     match = re.search(pattern, text)
 
     if match is None:
-        raise ValueError(f"Could not parse {x_key}, {y_key}, {z_key} from Horizons output.")
+        raise ValueError(
+            f"Could not parse {x_key}, {y_key}, {z_key} from Horizons output."
+        )
 
     x_value, y_value, z_value = match.groups()
 
