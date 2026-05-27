@@ -86,30 +86,45 @@ class Simulation:
 
     def _update_bodies(self) -> None:
         """
-        Updates all bodies using the gravitational effect of every other body.
+        Updates all bodies using Leapfrog integration.
         """
         time_step = self._get_time_step()
-        accelerations = {}
+        half_time_step = time_step / 2
 
-        for body in self.bodies:
-            total_acceleration = self._calculate_total_acceleration(body)
-            accelerations[body] = total_acceleration
-
+        current_accelerations = self._calculate_all_accelerations()
+        
         for body in self.bodies:
             self.physics_engine.update_body_velocity(
                 body,
-                accelerations[body],
-                time_step,
+                current_accelerations[body],
+                half_time_step,
             )
 
         for body in self.bodies:
             self.physics_engine.update_body_position(body, time_step)
 
+        updated_accelerations = self._calculate_all_accelerations()
+
+        for body in self.bodies:
+            self.physics_engine.update_body_velocity(
+                body,
+                updated_accelerations[body],
+                half_time_step,
+            )
+
+    def _calculate_all_accelerations(self) -> dict:
+        accelerations = {}
+
+        for body in self.bodies:
+            accelerations[body] = self._calculate_total_acceleration(body)
+
+        return accelerations
+
     def _calculate_total_acceleration(self, body):
         """
         Calculates the total acceleration applied to a body by all other bodies.
         """
-        total_acceleration = None
+        total_acceleration = vector(0, 0, 0)
 
         for other_body in self.bodies:
             if other_body == body:
@@ -120,10 +135,7 @@ class Simulation:
                 other_body,
             )
 
-            if total_acceleration is None:
-                total_acceleration = acceleration
-            else:
-                total_acceleration += acceleration
+            total_acceleration += acceleration
 
         return total_acceleration
 
