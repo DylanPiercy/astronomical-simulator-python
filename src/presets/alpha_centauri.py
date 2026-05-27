@@ -38,7 +38,7 @@ from config.alpha_centauri_data import (
 )
 from models.celestial_body import CelestialBody, CelestialBodyType
 from models.solar_system import SolarSystem
-from presets.preset_creation_helpers import create_star
+from presets.preset_creation_helpers import create_star, create_planet
 
 
 def create_alpha_centauri_system() -> SolarSystem:
@@ -73,28 +73,31 @@ def create_alpha_centauri_system() -> SolarSystem:
         colour=color.red,
     )
 
-    proxima_d = _create_proxima_planet(
+    proxima_d = create_planet(
         name=PROXIMA_CENTAURI_D,
         mass=PROXIMA_CENTAURI_D_MASS,
         radius=PROXIMA_CENTAURI_D_RADIUS,
+        parent_body=proxima_centauri,
         distance=PROXIMA_CENTAURI_D_AVERAGE_DISTANCE,
         velocity=PROXIMA_CENTAURI_D_AVERAGE_VELOCITY,
         colour=color.gray(0.6),
     )
 
-    proxima_b = _create_proxima_planet(
+    proxima_b = create_planet(
         name=PROXIMA_CENTAURI_B,
         mass=PROXIMA_CENTAURI_B_MASS,
         radius=PROXIMA_CENTAURI_B_RADIUS,
+        parent_body=proxima_centauri,
         distance=PROXIMA_CENTAURI_B_AVERAGE_DISTANCE,
         velocity=PROXIMA_CENTAURI_B_AVERAGE_VELOCITY,
         colour=color.blue,
     )
 
-    proxima_c = _create_proxima_planet(
+    proxima_c = create_planet(
         name=PROXIMA_CENTAURI_C,
         mass=PROXIMA_CENTAURI_C_MASS,
         radius=PROXIMA_CENTAURI_C_RADIUS,
+        parent_body=proxima_centauri,
         distance=PROXIMA_CENTAURI_C_AVERAGE_DISTANCE,
         velocity=PROXIMA_CENTAURI_C_AVERAGE_VELOCITY,
         colour=color.cyan,
@@ -110,35 +113,4 @@ def create_alpha_centauri_system() -> SolarSystem:
             proxima_b,
             proxima_c,
         ],
-    )
-
-
-def _create_proxima_planet(
-    name: str,
-    mass: float,
-    radius: float,
-    distance: float,
-    velocity: float,
-    colour,
-) -> CelestialBody:
-    """
-    Creates a planet orbiting Proxima Centauri in the X/Z plane.
-    """
-    return CelestialBody(
-        type=CelestialBodyType.PLANET,
-        name=name,
-        mass=mass,
-        radius=radius,
-        position=vector(
-            PROXIMA_CENTAURI_AVERAGE_DISTANCE,
-            0,
-            distance,
-        ),
-        velocity=vector(
-            velocity,
-            PROXIMA_CENTAURI_AVERAGE_VELOCITY,
-            0,
-        ),
-        colour=colour,
-        make_trail=True,
     )

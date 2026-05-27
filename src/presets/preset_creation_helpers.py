@@ -31,6 +31,7 @@ def create_planet(
     name: str,
     mass: float,
     radius: float,
+    parent_body: CelestialBody,
     distance: float,
     velocity: float,
     colour,
@@ -43,10 +44,19 @@ def create_planet(
         name=name,
         mass=mass,
         radius=radius,
-        position=vector(distance, 0, 0),
-        velocity=vector(0, velocity, 0),
+        position=vector(
+            parent_body.position.x + distance,
+            parent_body.position.y,
+            parent_body.position.z,
+        ),
+        velocity=vector(
+            parent_body.velocity.x,
+            parent_body.velocity.y + velocity,
+            parent_body.velocity.z,
+        ),
         colour=colour,
         make_trail=True,
+        parent_body=parent_body,
     )
 
 
@@ -55,8 +65,8 @@ def create_moon(
     mass: float,
     radius: float,
     parent_body: CelestialBody,
-    moon_distance: float,
-    moon_velocity: float,
+    distance: float,
+    velocity: float,
     colour,
 ) -> CelestialBody:
     """
@@ -70,10 +80,10 @@ def create_moon(
         position=vector(
             parent_body.position.x,
             parent_body.position.y,
-            parent_body.position.z + moon_distance,
+            parent_body.position.z + distance,
         ),
         velocity=vector(
-            parent_body.velocity.x + moon_velocity,
+            parent_body.velocity.x + velocity,
             parent_body.velocity.y,
             parent_body.velocity.z,
         ),
