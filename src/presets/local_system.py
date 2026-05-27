@@ -4,62 +4,7 @@ This file contains preset CelestialBody objects for the local solar system.
 
 from vpython import color, vector
 
-from config.local_system_data import (
-    EARTH,
-    EARTH_AVERAGE_DISTANCE,
-    EARTH_AVERAGE_VELOCITY,
-    EARTH_MASS,
-    EARTH_RADIUS,
-    JUPITER,
-    JUPITER_AVERAGE_DISTANCE,
-    JUPITER_AVERAGE_VELOCITY,
-    JUPITER_MASS,
-    JUPITER_RADIUS,
-    MARS,
-    MARS_AVERAGE_DISTANCE,
-    MARS_AVERAGE_VELOCITY,
-    MARS_MASS,
-    MARS_RADIUS,
-    MERCURY,
-    MERCURY_AVERAGE_DISTANCE,
-    MERCURY_AVERAGE_VELOCITY,
-    MERCURY_MASS,
-    MERCURY_RADIUS,
-    MOON,
-    MOON_AVERAGE_DISTANCE,
-    MOON_AVERAGE_VELOCITY,
-    MOON_MASS,
-    MOON_RADIUS,
-    NEPTUNE,
-    NEPTUNE_AVERAGE_DISTANCE,
-    NEPTUNE_AVERAGE_VELOCITY,
-    NEPTUNE_MASS,
-    NEPTUNE_RADIUS,
-    PLUTO,
-    PLUTO_AVERAGE_DISTANCE,
-    PLUTO_AVERAGE_VELOCITY,
-    PLUTO_MASS,
-    PLUTO_RADIUS,
-    SATURN,
-    SATURN_AVERAGE_DISTANCE,
-    SATURN_AVERAGE_VELOCITY,
-    SATURN_MASS,
-    SATURN_RADIUS,
-    SUN,
-    SUN_AVERAGE_VELOCITY,
-    SUN_MASS,
-    SUN_RADIUS,
-    URANUS,
-    URANUS_AVERAGE_DISTANCE,
-    URANUS_AVERAGE_VELOCITY,
-    URANUS_MASS,
-    URANUS_RADIUS,
-    VENUS,
-    VENUS_AVERAGE_DISTANCE,
-    VENUS_AVERAGE_VELOCITY,
-    VENUS_MASS,
-    VENUS_RADIUS,
-)
+from config.local_system_data import *
 from models.solar_system import SolarSystem
 from presets.preset_creation_helpers import create_moon, create_planet, create_star
 
@@ -86,6 +31,8 @@ def create_local_system() -> SolarSystem:
         distance=MERCURY_AVERAGE_DISTANCE,
         velocity=MERCURY_AVERAGE_VELOCITY,
         colour=color.gray(0.5),
+        inclination_degrees=MERCURY_ORBITAL_INCLINATION,
+        phase_degrees=MERCURY_ORBITAL_PHASE,
     )
 
     venus = create_planet(
@@ -96,6 +43,8 @@ def create_local_system() -> SolarSystem:
         distance=VENUS_AVERAGE_DISTANCE,
         velocity=VENUS_AVERAGE_VELOCITY,
         colour=color.orange,
+        inclination_degrees=VENUS_ORBITAL_INCLINATION,
+        phase_degrees=VENUS_ORBITAL_PHASE,
     )
 
     earth = create_planet(
@@ -106,6 +55,8 @@ def create_local_system() -> SolarSystem:
         distance=EARTH_AVERAGE_DISTANCE,
         velocity=EARTH_AVERAGE_VELOCITY,
         colour=color.blue,
+        inclination_degrees=EARTH_ORBITAL_INCLINATION,
+        phase_degrees=EARTH_ORBITAL_PHASE,
     )
 
     moon = create_moon(
@@ -116,6 +67,8 @@ def create_local_system() -> SolarSystem:
         distance=MOON_AVERAGE_DISTANCE,
         velocity=MOON_AVERAGE_VELOCITY,
         colour=color.white,
+        inclination_degrees=MOON_ORBITAL_INCLINATION,
+        phase_degrees=MOON_ORBITAL_PHASE,
     )
 
     mars = create_planet(
@@ -126,6 +79,8 @@ def create_local_system() -> SolarSystem:
         distance=MARS_AVERAGE_DISTANCE,
         velocity=MARS_AVERAGE_VELOCITY,
         colour=color.red,
+        inclination_degrees=MARS_ORBITAL_INCLINATION,
+        phase_degrees=MARS_ORBITAL_PHASE,
     )
 
     jupiter = create_planet(
@@ -136,6 +91,8 @@ def create_local_system() -> SolarSystem:
         distance=JUPITER_AVERAGE_DISTANCE,
         velocity=JUPITER_AVERAGE_VELOCITY,
         colour=color.orange,
+        inclination_degrees=JUPITER_ORBITAL_INCLINATION,
+        phase_degrees=JUPITER_ORBITAL_PHASE,
     )
 
     saturn = create_planet(
@@ -146,6 +103,8 @@ def create_local_system() -> SolarSystem:
         distance=SATURN_AVERAGE_DISTANCE,
         velocity=SATURN_AVERAGE_VELOCITY,
         colour=color.yellow,
+        inclination_degrees=SATURN_ORBITAL_INCLINATION,
+        phase_degrees=SATURN_ORBITAL_PHASE,
     )
 
     uranus = create_planet(
@@ -156,6 +115,8 @@ def create_local_system() -> SolarSystem:
         distance=URANUS_AVERAGE_DISTANCE,
         velocity=URANUS_AVERAGE_VELOCITY,
         colour=color.cyan,
+        inclination_degrees=URANUS_ORBITAL_INCLINATION,
+        phase_degrees=URANUS_ORBITAL_PHASE,
     )
 
     neptune = create_planet(
@@ -166,6 +127,8 @@ def create_local_system() -> SolarSystem:
         distance=NEPTUNE_AVERAGE_DISTANCE,
         velocity=NEPTUNE_AVERAGE_VELOCITY,
         colour=color.blue,
+        inclination_degrees=NEPTUNE_ORBITAL_INCLINATION,
+        phase_degrees=NEPTUNE_ORBITAL_PHASE,
     )
 
     pluto = create_planet(
@@ -176,6 +139,8 @@ def create_local_system() -> SolarSystem:
         distance=PLUTO_AVERAGE_DISTANCE,
         velocity=PLUTO_AVERAGE_VELOCITY,
         colour=color.gray(0.7),
+        inclination_degrees=PLUTO_ORBITAL_INCLINATION,
+        phase_degrees=PLUTO_ORBITAL_PHASE,
     )
 
     return SolarSystem(
