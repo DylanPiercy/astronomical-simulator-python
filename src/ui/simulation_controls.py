@@ -31,6 +31,7 @@ class SimulationControls:
         self.camera_focus_menu: Any = None
         self.camera_focus_button: Any = None
         self.selected_camera_focus_name = "Center"
+        self.system_diagnostics_text: Any = None
 
     def setup(self) -> None:
         """
@@ -87,6 +88,10 @@ class SimulationControls:
             text="Focus camera",
             bind=self._apply_camera_focus,
         )
+
+        scene.append_to_caption("\n")
+        self.system_diagnostics_text = wtext(text="")
+        self.simulation.set_system_diagnostics_text(self.system_diagnostics_text)
 
         scene.append_to_caption("\nControls: Press SPACE to pause/resume.")
 
