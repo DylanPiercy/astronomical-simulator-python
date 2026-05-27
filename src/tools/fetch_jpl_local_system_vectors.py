@@ -136,7 +136,7 @@ def write_output_file(vectors: dict[str, StateVector]) -> None:
         '"""',
         "JPL Horizons state vectors for the local solar system preset.",
         "",
-        "Generated for {EPOCH_START} UTC.",
+        f"Generated for {EPOCH_START} UTC.",
         "Positions are in metres.",
         "Velocities are in metres per second.",
         "",
