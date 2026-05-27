@@ -17,7 +17,7 @@ from models.celestial_body import VisualScalingMode
 class SimulationControls:
     """
     Creates UI controls for pausing, changing simulation speed, camera focus,
-    visual scaling, and trails.
+    visual scaling, trails, and simulation date display.
     """
 
     def __init__(self, simulation):
@@ -31,6 +31,7 @@ class SimulationControls:
         self.camera_focus_menu: Any = None
         self.camera_focus_button: Any = None
         self.selected_camera_focus_name = "Center"
+        self.simulation_date_text: Any = None
         self.system_diagnostics_text: Any = None
 
     def setup(self) -> None:
@@ -88,6 +89,10 @@ class SimulationControls:
             text="Focus camera",
             bind=self._apply_camera_focus,
         )
+
+        scene.append_to_caption("\n")
+        self.simulation_date_text = wtext(text="")
+        self.simulation.set_simulation_date_text(self.simulation_date_text)
 
         scene.append_to_caption("\n")
         self.system_diagnostics_text = wtext(text="")

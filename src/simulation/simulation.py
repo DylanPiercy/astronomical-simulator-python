@@ -2,12 +2,14 @@
 Simulation runner for the astronomical simulator.
 """
 
+from datetime import datetime, timedelta
 from typing import Optional
 
 from vpython import mag, rate, scene, vector
 
 from config.constants import (
     DEFAULT_DAYS_PER_SECOND,
+    EPOCH_START,
     RENDER_RATE,
     SECONDS_IN_DAY,
 )
@@ -35,7 +37,11 @@ class Simulation:
         self.visual_scaling_mode = VisualScalingMode.ARTISTIC
         self.trails_enabled = True
 
+        self.epoch_start = datetime.strptime(EPOCH_START, "%Y-%b-%d %H:%M")
+        self.simulated_elapsed_seconds = 0
+
         self.body_hover_label = BodyLabel(self.bodies)
+        self.simulation_date_text = None
         self.system_diagnostics_text = None
         self.diagnostics_frame_counter = 0
 
@@ -53,6 +59,7 @@ class Simulation:
 
             self._update_camera_focus()
             self.body_hover_label.update()
+            self._update_simulation_date_panel()
             self._update_system_diagnostics_panel()
 
     def toggle_pause(self) -> None:
@@ -65,11 +72,6 @@ class Simulation:
         self.days_per_second = days_per_second
 
     def set_camera_focus_body(self, body: Optional[CelestialBody]) -> None:
-        """
-        Sets the body the camera should follow.
-
-        If body is None, the camera focuses on the system center.
-        """
         self.camera_focus_body = body
 
     def set_visual_scaling_mode(self, visual_scaling_mode: VisualScalingMode) -> None:
@@ -82,13 +84,14 @@ class Simulation:
             body.set_visual_scaling_mode(visual_scaling_mode)
 
     def set_trails_enabled(self, trails_enabled: bool) -> None:
-        """
-        Shows or hides trails for all bodies.
-        """
         self.trails_enabled = trails_enabled
 
         for body in self.bodies:
             body.set_trails_enabled(trails_enabled)
+
+    def set_simulation_date_text(self, simulation_date_text) -> None:
+        self.simulation_date_text = simulation_date_text
+        self._update_simulation_date_panel()
 
     def set_system_diagnostics_text(self, system_diagnostics_text) -> None:
         """
@@ -109,10 +112,14 @@ class Simulation:
         """
         Updates all bodies using the physics-layer orbital integrator.
         """
+        time_step = self._get_time_step()
+
         self.orbital_integrator.update_bodies(
             self.bodies,
-            self._get_time_step(),
+            time_step,
         )
+
+        self.simulated_elapsed_seconds += time_step
 
     def _update_camera_focus(self) -> None:
         """
@@ -123,6 +130,21 @@ class Simulation:
             return
 
         scene.center = self.camera_focus_body.visual.pos
+
+    def _update_simulation_date_panel(self) -> None:
+        """
+        Updates the current simulation date UI panel.
+        """
+        if self.simulation_date_text is None:
+            return
+
+        current_date = self.epoch_start + timedelta(
+            seconds=self.simulated_elapsed_seconds
+        )
+
+        self.simulation_date_text.text = (
+            f"\nSimulation date: {current_date:%Y-%m-%d %H:%M:%S} UTC"
+        )
 
     def _update_system_diagnostics_panel(self) -> None:
         """

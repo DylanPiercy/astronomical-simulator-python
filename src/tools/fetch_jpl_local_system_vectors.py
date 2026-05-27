@@ -16,12 +16,11 @@ import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
 
+from config.constants import EPOCH_START, EPOCH_STOP
+
 OUTPUT_FILE = (
     Path(__file__).resolve().parents[1] / "config" / "local_system_state_vectors.py"
 )
-
-EPOCH_START = "2026-Jan-01 00:00"
-EPOCH_STOP = "2026-Jan-02 00:00"
 
 SUN_CENTER = "500@10"
 EARTH_CENTER = "500@399"
