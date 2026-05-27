@@ -12,6 +12,7 @@ from config.constants import (
     SECONDS_IN_DAY,
 )
 from models.celestial_body import CelestialBody, VisualScalingMode
+from physics.orbital_integrator import OrbitalIntegrator
 from physics.physics_engine import PhysicsEngine
 from ui.body_label import BodyLabel
 
@@ -24,6 +25,7 @@ class Simulation:
     def __init__(self, bodies):
         self.bodies = bodies
         self.physics_engine = PhysicsEngine()
+        self.orbital_integrator = OrbitalIntegrator(self.physics_engine)
         self.is_paused = False
         self.days_per_second = DEFAULT_DAYS_PER_SECOND
         self.camera_focus_body: Optional[CelestialBody] = None
@@ -86,58 +88,12 @@ class Simulation:
 
     def _update_bodies(self) -> None:
         """
-        Updates all bodies using Leapfrog integration.
+        Updates all bodies using the physics-layer orbital integrator.
         """
-        time_step = self._get_time_step()
-        half_time_step = time_step / 2
-
-        current_accelerations = self._calculate_all_accelerations()
-        
-        for body in self.bodies:
-            self.physics_engine.update_body_velocity(
-                body,
-                current_accelerations[body],
-                half_time_step,
-            )
-
-        for body in self.bodies:
-            self.physics_engine.update_body_position(body, time_step)
-
-        updated_accelerations = self._calculate_all_accelerations()
-
-        for body in self.bodies:
-            self.physics_engine.update_body_velocity(
-                body,
-                updated_accelerations[body],
-                half_time_step,
-            )
-
-    def _calculate_all_accelerations(self) -> dict:
-        accelerations = {}
-
-        for body in self.bodies:
-            accelerations[body] = self._calculate_total_acceleration(body)
-
-        return accelerations
-
-    def _calculate_total_acceleration(self, body):
-        """
-        Calculates the total acceleration applied to a body by all other bodies.
-        """
-        total_acceleration = vector(0, 0, 0)
-
-        for other_body in self.bodies:
-            if other_body == body:
-                continue
-
-            acceleration = self.physics_engine.calculate_gravitational_acceleration(
-                body,
-                other_body,
-            )
-
-            total_acceleration += acceleration
-
-        return total_acceleration
+        self.orbital_integrator.update_bodies(
+            self.bodies,
+            self._get_time_step(),
+        )
 
     def _update_camera_focus(self) -> None:
         """
