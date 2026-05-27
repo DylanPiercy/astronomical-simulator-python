@@ -194,11 +194,12 @@ class CelestialBody:
 
         if self.type == CelestialBodyType.MOON:
             return MOON_TRAIL_MARKER_RADIUS
-        
+
         if self.type in {
             CelestialBodyType.ASTEROID,
             CelestialBodyType.COMET,
-        }: return ASTEROID_COMET_TRAIL_MARKER_RADIUS
+        }:
+            return ASTEROID_COMET_TRAIL_MARKER_RADIUS
 
         raise ValueError(f"Invalid celestial body type: {self.type}")
 

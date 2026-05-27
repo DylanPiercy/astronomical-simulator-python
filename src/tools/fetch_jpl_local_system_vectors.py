@@ -11,10 +11,14 @@ src/config/local_system_state_vectors.py
 
 import json
 import re
+import sys
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
+
+SRC_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(SRC_DIR))
 
 from config.constants import EPOCH_START, EPOCH_STOP
 
@@ -24,6 +28,12 @@ OUTPUT_FILE = (
 
 SUN_CENTER = "500@10"
 EARTH_CENTER = "500@399"
+MARS_CENTER = "500@499"
+JUPITER_CENTER = "500@599"
+SATURN_CENTER = "500@699"
+URANUS_CENTER = "500@799"
+NEPTUNE_CENTER = "500@899"
+PLUTO_CENTER = "500@999"
 
 
 @dataclass(frozen=True)
@@ -39,16 +49,45 @@ class StateVector:
 
 
 BODIES: dict[str, BodyQuery] = {
+    # Planets and dwarf planets relative to the Sun
     "MERCURY": BodyQuery(command="199", center=SUN_CENTER),
     "VENUS": BodyQuery(command="299", center=SUN_CENTER),
     "EARTH": BodyQuery(command="399", center=SUN_CENTER),
-    "MOON": BodyQuery(command="301", center=EARTH_CENTER),
     "MARS": BodyQuery(command="499", center=SUN_CENTER),
     "JUPITER": BodyQuery(command="599", center=SUN_CENTER),
     "SATURN": BodyQuery(command="699", center=SUN_CENTER),
     "URANUS": BodyQuery(command="799", center=SUN_CENTER),
     "NEPTUNE": BodyQuery(command="899", center=SUN_CENTER),
     "PLUTO": BodyQuery(command="999", center=SUN_CENTER),
+    # Moons relative to their parent planets or dwarf planets
+    # Earth
+    "MOON": BodyQuery(command="301", center=EARTH_CENTER),
+    # Mars
+    "PHOBOS": BodyQuery(command="401", center=MARS_CENTER),
+    "DEIMOS": BodyQuery(command="402", center=MARS_CENTER),
+    # Jupiter
+    "IO": BodyQuery(command="501", center=JUPITER_CENTER),
+    "EUROPA": BodyQuery(command="502", center=JUPITER_CENTER),
+    "GANYMEDE": BodyQuery(command="503", center=JUPITER_CENTER),
+    "CALLISTO": BodyQuery(command="504", center=JUPITER_CENTER),
+    # Saturn
+    "MIMAS": BodyQuery(command="601", center=SATURN_CENTER),
+    "ENCELADUS": BodyQuery(command="602", center=SATURN_CENTER),
+    "TETHYS": BodyQuery(command="603", center=SATURN_CENTER),
+    "DIONE": BodyQuery(command="604", center=SATURN_CENTER),
+    "RHEA": BodyQuery(command="605", center=SATURN_CENTER),
+    "TITAN": BodyQuery(command="606", center=SATURN_CENTER),
+    "IAPETUS": BodyQuery(command="608", center=SATURN_CENTER),
+    # Uranus
+    "ARIEL": BodyQuery(command="701", center=URANUS_CENTER),
+    "UMBRIEL": BodyQuery(command="702", center=URANUS_CENTER),
+    "TITANIA": BodyQuery(command="703", center=URANUS_CENTER),
+    "OBERON": BodyQuery(command="704", center=URANUS_CENTER),
+    "MIRANDA": BodyQuery(command="705", center=URANUS_CENTER),
+    # Neptune
+    "TRITON": BodyQuery(command="801", center=NEPTUNE_CENTER),
+    # Pluto
+    "CHARON": BodyQuery(command="901", center=PLUTO_CENTER),
 }
 
 
@@ -139,8 +178,8 @@ def write_output_file(vectors: dict[str, StateVector]) -> None:
         "Positions are in metres.",
         "Velocities are in metres per second.",
         "",
-        "Planet vectors are relative to the Sun.",
-        "Moon vector is relative to Earth.",
+        "Planet and dwarf planet vectors are relative to the Sun.",
+        "Moon vectors are relative to their parent planets or dwarf planets.",
         '"""',
         "",
         "STATE_VECTORS_GENERATED = True",
