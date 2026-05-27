@@ -37,12 +37,10 @@ def create_planet(
     distance: float,
     velocity: float,
     colour: vector,
-    inclination_degrees: float,
-    phase_degrees: float,
+    inclination_degrees: float = 0,
+    phase_degrees: float = 0,
+    longitude_of_ascending_node_degrees: float = 0,
 ) -> CelestialBody:
-    """
-    Creates a planet orbiting a parent body.
-    """
     return _create_orbiting_body(
         type=CelestialBodyType.PLANET,
         name=name,
@@ -54,6 +52,7 @@ def create_planet(
         colour=colour,
         inclination_degrees=inclination_degrees,
         phase_degrees=phase_degrees,
+        longitude_of_ascending_node_degrees=longitude_of_ascending_node_degrees,
     )
 
 
@@ -65,12 +64,10 @@ def create_moon(
     distance: float,
     velocity: float,
     colour: vector,
-    inclination_degrees: float,
-    phase_degrees: float,
+    inclination_degrees: float = 0,
+    phase_degrees: float = 0,
+    longitude_of_ascending_node_degrees: float = 0,
 ) -> CelestialBody:
-    """
-    Creates a moon orbiting a parent body.
-    """
     return _create_orbiting_body(
         type=CelestialBodyType.MOON,
         name=name,
@@ -82,6 +79,33 @@ def create_moon(
         colour=colour,
         inclination_degrees=inclination_degrees,
         phase_degrees=phase_degrees,
+        longitude_of_ascending_node_degrees=longitude_of_ascending_node_degrees,
+    )
+
+
+def create_orbiting_body_from_state_vector(
+    type: CelestialBodyType,
+    name: str,
+    mass: float,
+    radius: float,
+    parent_body: CelestialBody,
+    relative_position: vector,
+    relative_velocity: vector,
+    colour: vector,
+) -> CelestialBody:
+    """
+    Creates an orbiting body from a real relative state vector.
+    """
+    return CelestialBody(
+        type=type,
+        name=name,
+        mass=mass,
+        radius=radius,
+        position=parent_body.position + relative_position,
+        velocity=parent_body.velocity + relative_velocity,
+        colour=colour,
+        make_trail=True,
+        parent_body=parent_body,
     )
 
 
@@ -96,21 +120,18 @@ def _create_orbiting_body(
     colour: vector,
     inclination_degrees: float,
     phase_degrees: float,
+    longitude_of_ascending_node_degrees: float,
 ) -> CelestialBody:
-    """
-    Creates a body using simple circular orbital elements.
-
-    Position is placed relative to the parent.
-    Velocity is tangent to the orbit and inherits the parent's velocity.
-    """
     radial_direction = _calculate_radial_direction(
         inclination_degrees=inclination_degrees,
         phase_degrees=phase_degrees,
+        longitude_of_ascending_node_degrees=longitude_of_ascending_node_degrees,
     )
 
     tangential_direction = _calculate_tangential_direction(
         inclination_degrees=inclination_degrees,
         phase_degrees=phase_degrees,
+        longitude_of_ascending_node_degrees=longitude_of_ascending_node_degrees,
     )
 
     return CelestialBody(
@@ -129,32 +150,54 @@ def _create_orbiting_body(
 def _calculate_radial_direction(
     inclination_degrees: float,
     phase_degrees: float,
+    longitude_of_ascending_node_degrees: float,
 ) -> vector:
-    """
-    Calculates the orbital radial direction from inclination and phase.
-    """
     inclination = radians(inclination_degrees)
     phase = radians(phase_degrees)
+    longitude_of_ascending_node = radians(longitude_of_ascending_node_degrees)
 
-    return vector(
-        cos(phase),
-        sin(phase) * cos(inclination),
-        sin(phase) * sin(inclination),
+    return _rotate_orbital_plane_vector(
+        vector(cos(phase), sin(phase), 0),
+        inclination,
+        longitude_of_ascending_node,
     )
 
 
 def _calculate_tangential_direction(
     inclination_degrees: float,
     phase_degrees: float,
+    longitude_of_ascending_node_degrees: float,
 ) -> vector:
-    """
-    Calculates the orbital tangential direction from inclination and phase.
-    """
     inclination = radians(inclination_degrees)
     phase = radians(phase_degrees)
+    longitude_of_ascending_node = radians(longitude_of_ascending_node_degrees)
+
+    return _rotate_orbital_plane_vector(
+        vector(-sin(phase), cos(phase), 0),
+        inclination,
+        longitude_of_ascending_node,
+    )
+
+
+def _rotate_orbital_plane_vector(
+    base_vector: vector,
+    inclination: float,
+    longitude_of_ascending_node: float,
+) -> vector:
+    x = base_vector.x
+    y = base_vector.y
+    z = base_vector.z
+
+    inclined_vector = vector(
+        x,
+        y * cos(inclination) - z * sin(inclination),
+        y * sin(inclination) + z * cos(inclination),
+    )
 
     return vector(
-        -sin(phase),
-        cos(phase) * cos(inclination),
-        cos(phase) * sin(inclination),
+        inclined_vector.x * cos(longitude_of_ascending_node)
+        - inclined_vector.y * sin(longitude_of_ascending_node),
+        inclined_vector.x * sin(longitude_of_ascending_node)
+        + inclined_vector.y * cos(longitude_of_ascending_node),
+        inclined_vector.z,
     )

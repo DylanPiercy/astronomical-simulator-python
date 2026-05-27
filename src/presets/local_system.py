@@ -4,15 +4,82 @@ This file contains preset CelestialBody objects for the local solar system.
 
 from vpython import color, vector
 
-from config.local_system_data import *
+from config.local_system_data import (
+    EARTH,
+    EARTH_MASS,
+    EARTH_RADIUS,
+    JUPITER,
+    JUPITER_MASS,
+    JUPITER_RADIUS,
+    MARS,
+    MARS_MASS,
+    MARS_RADIUS,
+    MERCURY,
+    MERCURY_MASS,
+    MERCURY_RADIUS,
+    MOON,
+    MOON_MASS,
+    MOON_RADIUS,
+    NEPTUNE,
+    NEPTUNE_MASS,
+    NEPTUNE_RADIUS,
+    PLUTO,
+    PLUTO_MASS,
+    PLUTO_RADIUS,
+    SATURN,
+    SATURN_MASS,
+    SATURN_RADIUS,
+    SUN,
+    SUN_AVERAGE_VELOCITY,
+    SUN_MASS,
+    SUN_RADIUS,
+    URANUS,
+    URANUS_MASS,
+    URANUS_RADIUS,
+    VENUS,
+    VENUS_MASS,
+    VENUS_RADIUS,
+)
+from config.local_system_state_vectors import (
+    EARTH_RELATIVE_POSITION,
+    EARTH_RELATIVE_VELOCITY,
+    JUPITER_RELATIVE_POSITION,
+    JUPITER_RELATIVE_VELOCITY,
+    MARS_RELATIVE_POSITION,
+    MARS_RELATIVE_VELOCITY,
+    MERCURY_RELATIVE_POSITION,
+    MERCURY_RELATIVE_VELOCITY,
+    MOON_RELATIVE_POSITION,
+    MOON_RELATIVE_VELOCITY,
+    NEPTUNE_RELATIVE_POSITION,
+    NEPTUNE_RELATIVE_VELOCITY,
+    PLUTO_RELATIVE_POSITION,
+    PLUTO_RELATIVE_VELOCITY,
+    SATURN_RELATIVE_POSITION,
+    SATURN_RELATIVE_VELOCITY,
+    STATE_VECTORS_GENERATED,
+    URANUS_RELATIVE_POSITION,
+    URANUS_RELATIVE_VELOCITY,
+    VENUS_RELATIVE_POSITION,
+    VENUS_RELATIVE_VELOCITY,
+)
+from models.celestial_body import CelestialBodyType
 from models.solar_system import SolarSystem
-from presets.preset_creation_helpers import create_moon, create_planet, create_star
+from presets.preset_creation_helpers import (
+    create_orbiting_body_from_state_vector,
+    create_star,
+)
 
 
 def create_local_system() -> SolarSystem:
     """
     Creates the preset celestial bodies for the local solar system.
     """
+    if not STATE_VECTORS_GENERATED:
+        raise RuntimeError(
+            "JPL state vectors have not been generated. "
+            "Run: python src/tools/fetch_jpl_local_system_vectors.py"
+        )
 
     sun = create_star(
         name=SUN,
@@ -23,124 +90,114 @@ def create_local_system() -> SolarSystem:
         colour=color.yellow,
     )
 
-    mercury = create_planet(
+    mercury = create_orbiting_body_from_state_vector(
+        type=CelestialBodyType.PLANET,
         name=MERCURY,
         mass=MERCURY_MASS,
         radius=MERCURY_RADIUS,
         parent_body=sun,
-        distance=MERCURY_AVERAGE_DISTANCE,
-        velocity=MERCURY_AVERAGE_VELOCITY,
+        relative_position=vector(*MERCURY_RELATIVE_POSITION),
+        relative_velocity=vector(*MERCURY_RELATIVE_VELOCITY),
         colour=color.gray(0.5),
-        inclination_degrees=MERCURY_ORBITAL_INCLINATION,
-        phase_degrees=MERCURY_ORBITAL_PHASE,
     )
 
-    venus = create_planet(
+    venus = create_orbiting_body_from_state_vector(
+        type=CelestialBodyType.PLANET,
         name=VENUS,
         mass=VENUS_MASS,
         radius=VENUS_RADIUS,
         parent_body=sun,
-        distance=VENUS_AVERAGE_DISTANCE,
-        velocity=VENUS_AVERAGE_VELOCITY,
+        relative_position=vector(*VENUS_RELATIVE_POSITION),
+        relative_velocity=vector(*VENUS_RELATIVE_VELOCITY),
         colour=color.orange,
-        inclination_degrees=VENUS_ORBITAL_INCLINATION,
-        phase_degrees=VENUS_ORBITAL_PHASE,
     )
 
-    earth = create_planet(
+    earth = create_orbiting_body_from_state_vector(
+        type=CelestialBodyType.PLANET,
         name=EARTH,
         mass=EARTH_MASS,
         radius=EARTH_RADIUS,
         parent_body=sun,
-        distance=EARTH_AVERAGE_DISTANCE,
-        velocity=EARTH_AVERAGE_VELOCITY,
+        relative_position=vector(*EARTH_RELATIVE_POSITION),
+        relative_velocity=vector(*EARTH_RELATIVE_VELOCITY),
         colour=color.blue,
-        inclination_degrees=EARTH_ORBITAL_INCLINATION,
-        phase_degrees=EARTH_ORBITAL_PHASE,
     )
 
-    moon = create_moon(
+    moon = create_orbiting_body_from_state_vector(
+        type=CelestialBodyType.MOON,
         name=MOON,
         mass=MOON_MASS,
         radius=MOON_RADIUS,
         parent_body=earth,
-        distance=MOON_AVERAGE_DISTANCE,
-        velocity=MOON_AVERAGE_VELOCITY,
+        relative_position=vector(*MOON_RELATIVE_POSITION),
+        relative_velocity=vector(*MOON_RELATIVE_VELOCITY),
         colour=color.white,
-        inclination_degrees=MOON_ORBITAL_INCLINATION,
-        phase_degrees=MOON_ORBITAL_PHASE,
     )
 
-    mars = create_planet(
+    mars = create_orbiting_body_from_state_vector(
+        type=CelestialBodyType.PLANET,
         name=MARS,
         mass=MARS_MASS,
         radius=MARS_RADIUS,
         parent_body=sun,
-        distance=MARS_AVERAGE_DISTANCE,
-        velocity=MARS_AVERAGE_VELOCITY,
+        relative_position=vector(*MARS_RELATIVE_POSITION),
+        relative_velocity=vector(*MARS_RELATIVE_VELOCITY),
         colour=color.red,
-        inclination_degrees=MARS_ORBITAL_INCLINATION,
-        phase_degrees=MARS_ORBITAL_PHASE,
     )
 
-    jupiter = create_planet(
+    jupiter = create_orbiting_body_from_state_vector(
+        type=CelestialBodyType.PLANET,
         name=JUPITER,
         mass=JUPITER_MASS,
         radius=JUPITER_RADIUS,
         parent_body=sun,
-        distance=JUPITER_AVERAGE_DISTANCE,
-        velocity=JUPITER_AVERAGE_VELOCITY,
+        relative_position=vector(*JUPITER_RELATIVE_POSITION),
+        relative_velocity=vector(*JUPITER_RELATIVE_VELOCITY),
         colour=color.orange,
-        inclination_degrees=JUPITER_ORBITAL_INCLINATION,
-        phase_degrees=JUPITER_ORBITAL_PHASE,
     )
 
-    saturn = create_planet(
+    saturn = create_orbiting_body_from_state_vector(
+        type=CelestialBodyType.PLANET,
         name=SATURN,
         mass=SATURN_MASS,
         radius=SATURN_RADIUS,
         parent_body=sun,
-        distance=SATURN_AVERAGE_DISTANCE,
-        velocity=SATURN_AVERAGE_VELOCITY,
+        relative_position=vector(*SATURN_RELATIVE_POSITION),
+        relative_velocity=vector(*SATURN_RELATIVE_VELOCITY),
         colour=color.yellow,
-        inclination_degrees=SATURN_ORBITAL_INCLINATION,
-        phase_degrees=SATURN_ORBITAL_PHASE,
     )
 
-    uranus = create_planet(
+    uranus = create_orbiting_body_from_state_vector(
+        type=CelestialBodyType.PLANET,
         name=URANUS,
         mass=URANUS_MASS,
         radius=URANUS_RADIUS,
         parent_body=sun,
-        distance=URANUS_AVERAGE_DISTANCE,
-        velocity=URANUS_AVERAGE_VELOCITY,
+        relative_position=vector(*URANUS_RELATIVE_POSITION),
+        relative_velocity=vector(*URANUS_RELATIVE_VELOCITY),
         colour=color.cyan,
-        inclination_degrees=URANUS_ORBITAL_INCLINATION,
-        phase_degrees=URANUS_ORBITAL_PHASE,
     )
 
-    neptune = create_planet(
+    neptune = create_orbiting_body_from_state_vector(
+        type=CelestialBodyType.PLANET,
         name=NEPTUNE,
         mass=NEPTUNE_MASS,
         radius=NEPTUNE_RADIUS,
         parent_body=sun,
-        distance=NEPTUNE_AVERAGE_DISTANCE,
-        velocity=NEPTUNE_AVERAGE_VELOCITY,
+        relative_position=vector(*NEPTUNE_RELATIVE_POSITION),
+        relative_velocity=vector(*NEPTUNE_RELATIVE_VELOCITY),
         colour=color.blue,
-        inclination_degrees=NEPTUNE_ORBITAL_INCLINATION,
-        phase_degrees=NEPTUNE_ORBITAL_PHASE,
     )
 
-    pluto = create_planet(
+    pluto = create_orbiting_body_from_state_vector(
+        type=CelestialBodyType.PLANET,
         name=PLUTO,
         mass=PLUTO_MASS,
         radius=PLUTO_RADIUS,
         parent_body=sun,
-        distance=PLUTO_AVERAGE_DISTANCE,
-        velocity=PLUTO_AVERAGE_VELOCITY,
+        relative_position=vector(*PLUTO_RELATIVE_POSITION),
+        relative_velocity=vector(*PLUTO_RELATIVE_VELOCITY),
         colour=color.gray(0.7),
-        inclination_degrees=PLUTO_ORBITAL_INCLINATION,
-        phase_degrees=PLUTO_ORBITAL_PHASE,
     )
 
     return SolarSystem(
