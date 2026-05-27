@@ -102,7 +102,9 @@ class CelestialBody:
         self.trails_enabled = trails_enabled and self.make_trail
 
         for index, marker in enumerate(self.trail_markers):
-            marker.visible = self.trails_enabled and self.trail_marker_has_position[index]
+            marker.visible = (
+                self.trails_enabled and self.trail_marker_has_position[index]
+            )
 
     def _get_visual_radius(self) -> float:
         if self.visual_scaling_mode == VisualScalingMode.REALISTIC:
