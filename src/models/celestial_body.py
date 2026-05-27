@@ -3,6 +3,7 @@ Celestial body model used to represent stars, planets, moons, and other astronom
 """
 
 from enum import Enum
+from math import pi
 from typing import Optional
 
 from vpython import sphere, vector
@@ -12,15 +13,15 @@ from config.constants import (
     ARTISTIC_RADIUS_SCALE,
     DEFAULT_TRAIL_MARKER_RADIUS_SCALE,
     DISTANCE_SCALE,
+    MAX_DYNAMIC_TRAIL_MARKER_COUNT,
+    MIN_DYNAMIC_TRAIL_MARKER_COUNT,
     MOON_TRAIL_MARKER_RADIUS,
-    MOON_TRAIL_MAX_LENGTH,
     PLANET_TRAIL_MARKER_RADIUS,
-    PLANET_TRAIL_MAX_LENGTH,
     RADIUS_SCALE,
     SECONDS_IN_DAY,
     STAR_TRAIL_MARKER_RADIUS,
-    STAR_TRAIL_MAX_LENGTH,
     TRAIL_GAP_POINTS,
+    TRAIL_ORBIT_FRACTION,
     TRAIL_POINTS_PER_SIMULATED_DAY,
 )
 
@@ -70,7 +71,7 @@ class CelestialBody:
 
         self.trails_enabled = make_trail
         self.simulated_seconds_since_last_trail_point = 0
-        self.trail_max_length, self.base_trail_marker_radius = (
+        self.trail_marker_count, self.base_trail_marker_radius = (
             self._get_trail_settings()
         )
         self.trail_marker_radius_scale = DEFAULT_TRAIL_MARKER_RADIUS_SCALE
@@ -156,16 +157,55 @@ class CelestialBody:
         if not self.make_trail:
             return 0, 0
 
+        return (
+            self._calculate_dynamic_trail_marker_count(),
+            self._get_base_trail_marker_radius(),
+        )
+
+    def _get_base_trail_marker_radius(self) -> float:
         if self.type == CelestialBodyType.STAR:
-            return STAR_TRAIL_MAX_LENGTH, STAR_TRAIL_MARKER_RADIUS
+            return STAR_TRAIL_MARKER_RADIUS
 
         if self.type == CelestialBodyType.PLANET:
-            return PLANET_TRAIL_MAX_LENGTH, PLANET_TRAIL_MARKER_RADIUS
+            return PLANET_TRAIL_MARKER_RADIUS
 
         if self.type == CelestialBodyType.MOON:
-            return MOON_TRAIL_MAX_LENGTH, MOON_TRAIL_MARKER_RADIUS
+            return MOON_TRAIL_MARKER_RADIUS
 
         raise ValueError(f"Invalid celestial body type: {self.type}")
+
+    def _calculate_dynamic_trail_marker_count(self) -> int:
+        """
+        Calculates trail marker count from estimated orbit size.
+
+        The target is a configurable fraction of the body's orbit around its parent.
+        Bodies without a parent fall back to the minimum marker count.
+        """
+        if self.parent_body is None:
+            return MIN_DYNAMIC_TRAIL_MARKER_COUNT
+
+        orbital_radius = (self.position - self.parent_body.position).mag
+        relative_speed = (self.velocity - self.parent_body.velocity).mag
+
+        if orbital_radius <= 0 or relative_speed <= 0:
+            return MIN_DYNAMIC_TRAIL_MARKER_COUNT
+
+        orbital_period_seconds = 2 * pi * orbital_radius / relative_speed
+        trail_duration_days = (
+            orbital_period_seconds / SECONDS_IN_DAY * TRAIL_ORBIT_FRACTION
+        )
+        marker_count = round(trail_duration_days * TRAIL_POINTS_PER_SIMULATED_DAY)
+
+        return self._clamp_marker_count(marker_count)
+
+    def _clamp_marker_count(self, marker_count: int) -> int:
+        """
+        Keeps dynamic trail marker counts within safe performance bounds.
+        """
+        return max(
+            MIN_DYNAMIC_TRAIL_MARKER_COUNT,
+            min(MAX_DYNAMIC_TRAIL_MARKER_COUNT, marker_count),
+        )
 
     def _create_trail_markers(self) -> list:
         """
@@ -182,7 +222,7 @@ class CelestialBody:
                 visible=False,
                 make_trail=False,
             )
-            for _ in range(self.trail_max_length)
+            for _ in range(self.trail_marker_count)
         ]
 
     def _get_scaled_trail_marker_radius(self) -> float:
