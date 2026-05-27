@@ -23,7 +23,7 @@ from config.constants import (
     TRAIL_GAP_POINTS,
     TRAIL_ORBIT_FRACTION,
     TRAIL_POINTS_PER_SIMULATED_DAY,
-    ASTERIOD_COMET_TRAIL_MARKER_RADIUS,
+    ASTEROID_COMET_TRAIL_MARKER_RADIUS,
 )
 
 
@@ -198,7 +198,7 @@ class CelestialBody:
         if self.type in {
             CelestialBodyType.ASTEROID,
             CelestialBodyType.COMET,
-        }: return ASTERIOD_COMET_TRAIL_MARKER_RADIUS
+        }: return ASTEROID_COMET_TRAIL_MARKER_RADIUS
 
         raise ValueError(f"Invalid celestial body type: {self.type}")
 
