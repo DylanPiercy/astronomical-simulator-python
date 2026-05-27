@@ -52,7 +52,7 @@ BODIES: dict[str, BodyQuery] = {
 }
 
 
-def main() -> None:
+def run_fetch_tool() -> None:
     vectors = {
         body_name: fetch_state_vector(body_query)
         for body_name, body_query in BODIES.items()
@@ -133,7 +133,7 @@ def write_output_file(vectors: dict[str, StateVector]) -> None:
         '"""',
         "JPL Horizons state vectors for the local solar system preset.",
         "",
-        "Generated for 2026-01-01 00:00 UTC.",
+        "Generated for {EPOCH_START} UTC.",
         "Positions are in metres.",
         "Velocities are in metres per second.",
         "",
@@ -155,4 +155,4 @@ def write_output_file(vectors: dict[str, StateVector]) -> None:
 
 
 if __name__ == "__main__":
-    main()
+    run_fetch_tool()
