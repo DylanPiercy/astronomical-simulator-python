@@ -17,14 +17,7 @@ class OrbitalIntegrator:
 
     def update_bodies(self, bodies, time_step: float) -> None:
         """
-        Updates all bodies using Leapfrog integration.
-
-        Steps:
-        1. Calculate current accelerations.
-        2. Update velocities by half a timestep.
-        3. Update positions by a full timestep.
-        4. Recalculate accelerations.
-        5. Update velocities by another half timestep.
+        Updates all body positions and velocities using Leapfrog integration.
         """
         half_time_step = time_step / 2
 
