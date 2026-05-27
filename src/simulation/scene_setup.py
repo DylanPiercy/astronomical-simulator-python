@@ -6,7 +6,6 @@ from vpython import vector, scene
 
 from models.celestial_body import CelestialBody
 from presets.local_system import create_local_system
-from presets.alpha_centauri import create_alpha_centauri_system
 
 
 def setup_scene() -> list[CelestialBody]:
@@ -19,7 +18,6 @@ def setup_scene() -> list[CelestialBody]:
     scene.background = vector(0.02, 0.03, 0.10)
     scene.resizable = True
 
-    # Create a default celestial body to ensure the scene is initialized.
+    # Create a default celestial body to ensure the scene is initialised.
     system = create_local_system()
-    # system = create_alpha_centauri_system()
     return system.get_bodies()
