@@ -3,22 +3,22 @@ Celestial body model used to represent stars, planets, moons, and other astronom
 """
 
 from enum import Enum
-from typing import Any, Optional
+from typing import Optional
 
-from vpython import curve, sphere, vector
+from vpython import sphere, vector
 
 from config.constants import (
     ARTISTIC_MOON_DISTANCE_SCALE,
     ARTISTIC_RADIUS_SCALE,
     DISTANCE_SCALE,
+    MOON_TRAIL_MARKER_RADIUS,
     MOON_TRAIL_MAX_LENGTH,
-    MOON_TRAIL_MAX_WIDTH,
+    PLANET_TRAIL_MARKER_RADIUS,
     PLANET_TRAIL_MAX_LENGTH,
-    PLANET_TRAIL_MAX_WIDTH,
     RADIUS_SCALE,
     SECONDS_IN_DAY,
+    STAR_TRAIL_MARKER_RADIUS,
     STAR_TRAIL_MAX_LENGTH,
-    STAR_TRAIL_MAX_WIDTH,
     TRAIL_GAP_POINTS,
     TRAIL_POINTS_PER_SIMULATED_DAY,
 )
@@ -69,10 +69,10 @@ class CelestialBody:
 
         self.trails_enabled = make_trail
         self.simulated_seconds_since_last_trail_point = 0
-        self.trail_max_length, self.trail_width = self._get_trail_settings()
+        self.trail_max_length, self.trail_marker_radius = self._get_trail_settings()
         self.trail_recent_positions = []
-        self.trail_positions = []
-        self.trail: Any = self._create_trail()
+        self.trail_markers = self._create_trail_markers()
+        self.next_trail_marker_index = 0
 
         self.visual = sphere(
             pos=self._get_visual_position(),
@@ -99,12 +99,12 @@ class CelestialBody:
 
     def set_trails_enabled(self, trails_enabled: bool) -> None:
         """
-        Enables or disables this body's custom trail.
+        Enables or disables this body's trail markers.
         """
         self.trails_enabled = trails_enabled and self.make_trail
 
         if not self.trails_enabled:
-            self._clear_trail()
+            self._hide_trail_markers()
 
     def _get_visual_radius(self) -> float:
         """
@@ -141,39 +141,45 @@ class CelestialBody:
 
     def _get_trail_settings(self) -> tuple[int, float]:
         """
-        Returns trail length and width for this body.
+        Returns trail marker count and marker radius for this body.
         """
         if not self.make_trail:
             return 0, 0
 
         if self.type == CelestialBodyType.STAR:
-            return STAR_TRAIL_MAX_LENGTH, STAR_TRAIL_MAX_WIDTH
+            return STAR_TRAIL_MAX_LENGTH, STAR_TRAIL_MARKER_RADIUS
 
         if self.type == CelestialBodyType.PLANET:
-            return PLANET_TRAIL_MAX_LENGTH, PLANET_TRAIL_MAX_WIDTH
+            return PLANET_TRAIL_MAX_LENGTH, PLANET_TRAIL_MARKER_RADIUS
 
         if self.type == CelestialBodyType.MOON:
-            return MOON_TRAIL_MAX_LENGTH, MOON_TRAIL_MAX_WIDTH
+            return MOON_TRAIL_MAX_LENGTH, MOON_TRAIL_MARKER_RADIUS
 
         raise ValueError(f"Invalid celestial body type: {self.type}")
 
-    def _create_trail(self):
+    def _create_trail_markers(self) -> list:
         """
-        Creates the custom trail curve.
+        Creates reusable hidden trail marker spheres.
         """
         if not self.make_trail:
-            return None
+            return []
 
-        return curve(
-            color=self.colour,
-            radius=self.trail_width,
-        )
+        return [
+            sphere(
+                pos=vector(0, 0, 0),
+                radius=self.trail_marker_radius,
+                color=self.colour,
+                visible=False,
+                make_trail=False,
+            )
+            for _ in range(self.trail_max_length)
+        ]
 
     def _update_trail(self, time_step: float) -> None:
         """
-        Adds trail points based on simulated time, leaving a gap behind the body.
+        Updates trail markers based on simulated time, leaving a gap behind the body.
         """
-        if not self.trails_enabled or self.trail is None:
+        if not self.trails_enabled or not self.trail_markers:
             return
 
         trail_point_interval = SECONDS_IN_DAY / TRAIL_POINTS_PER_SIMULATED_DAY
@@ -189,35 +195,27 @@ class CelestialBody:
             return
 
         trail_position = self.trail_recent_positions.pop(0)
-        self.trail_positions.append(trail_position)
-        self.trail.append(pos=trail_position)
+        trail_marker = self.trail_markers[self.next_trail_marker_index]
 
-        if len(self.trail_positions) > self.trail_max_length:
-            self.trail_positions.pop(0)
-            self._rebuild_trail()
+        trail_marker.pos = trail_position
+        trail_marker.visible = True
 
-    def _rebuild_trail(self) -> None:
-        """
-        Rebuilds the trail after old points are removed.
-        """
-        if self.trail is None:
-            return
-
-        self.trail.clear()
-
-        for trail_position in self.trail_positions:
-            self.trail.append(pos=trail_position)
+        self.next_trail_marker_index = (self.next_trail_marker_index + 1) % len(
+            self.trail_markers
+        )
 
     def _clear_trail(self) -> None:
         """
-        Clears stored and rendered trail positions.
+        Resets stored trail state and hides all trail markers.
         """
         self.simulated_seconds_since_last_trail_point = 0
         self.trail_recent_positions.clear()
-        self.trail_positions.clear()
+        self.next_trail_marker_index = 0
+        self._hide_trail_markers()
 
-        if self.trail is not None:
-            self.trail.clear()
+    def _hide_trail_markers(self) -> None:
+        for marker in self.trail_markers:
+            marker.visible = False
 
     def _copy_position(self, position: vector) -> vector:
         """
