@@ -38,7 +38,6 @@ class PhysicsEngine:
     @staticmethod
     def update_body_position(body, time_step: float) -> None:
         """
-        Updates a body's position using velocity and time step.
+        Updates a body's physical position using velocity and time step.
         """
         body.position += body.velocity * time_step
-        body.update_visual_position(time_step)

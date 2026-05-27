@@ -3,6 +3,7 @@ Simulation runner for the astronomical simulator.
 """
 
 from datetime import datetime, timedelta
+from math import ceil
 from typing import Optional
 
 from vpython import mag, rate, scene, vector
@@ -11,6 +12,7 @@ from config.constants import (
     DEFAULT_DAYS_PER_SECOND,
     DEFAULT_TRAIL_MARKER_RADIUS_SCALE,
     EPOCH_START,
+    MAX_INTERNAL_PHYSICS_STEP_SECONDS,
     RENDER_RATE,
     SECONDS_IN_DAY,
 )
@@ -121,16 +123,33 @@ class Simulation:
 
     def _update_bodies(self) -> None:
         """
-        Updates all bodies using the physics-layer orbital integrator.
+        Updates all bodies using smaller internal physics substeps.
+
+        Visual positions and trails are updated once per rendered frame.
         """
-        time_step = self._get_time_step()
+        frame_time_step = self._get_time_step()
+        substep_count = self._calculate_substep_count(frame_time_step)
+        substep_time_step = frame_time_step / substep_count
 
-        self.orbital_integrator.update_bodies(
-            self.bodies,
-            time_step,
+        for _ in range(substep_count):
+            self.orbital_integrator.update_bodies(
+                self.bodies,
+                substep_time_step,
+            )
+
+        for body in self.bodies:
+            body.update_visual_position(frame_time_step)
+
+        self.simulated_elapsed_seconds += frame_time_step
+
+    def _calculate_substep_count(self, frame_time_step: float) -> int:
+        """
+        Calculates how many internal physics steps are needed for this frame.
+        """
+        return max(
+            1,
+            ceil(frame_time_step / MAX_INTERNAL_PHYSICS_STEP_SECONDS),
         )
-
-        self.simulated_elapsed_seconds += time_step
 
     def _update_camera_focus(self) -> None:
         """
