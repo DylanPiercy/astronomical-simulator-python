@@ -9,6 +9,7 @@ from vpython import mag, rate, scene, vector
 
 from config.constants import (
     DEFAULT_DAYS_PER_SECOND,
+    DEFAULT_TRAIL_MARKER_RADIUS_SCALE,
     EPOCH_START,
     RENDER_RATE,
     SECONDS_IN_DAY,
@@ -36,6 +37,7 @@ class Simulation:
         self.camera_focus_body: Optional[CelestialBody] = None
         self.visual_scaling_mode = VisualScalingMode.ARTISTIC
         self.trails_enabled = True
+        self.trail_marker_radius_scale = DEFAULT_TRAIL_MARKER_RADIUS_SCALE
 
         self.epoch_start = datetime.strptime(EPOCH_START, "%Y-%b-%d %H:%M")
         self.simulated_elapsed_seconds = 0
@@ -88,6 +90,15 @@ class Simulation:
 
         for body in self.bodies:
             body.set_trails_enabled(trails_enabled)
+
+    def set_trail_marker_radius_scale(self, trail_marker_radius_scale: float) -> None:
+        """
+        Updates trail marker radius scale for all bodies.
+        """
+        self.trail_marker_radius_scale = trail_marker_radius_scale
+
+        for body in self.bodies:
+            body.set_trail_marker_radius_scale(trail_marker_radius_scale)
 
     def set_simulation_date_text(self, simulation_date_text) -> None:
         self.simulation_date_text = simulation_date_text

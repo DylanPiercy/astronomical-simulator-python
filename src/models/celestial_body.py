@@ -10,6 +10,7 @@ from vpython import sphere, vector
 from config.constants import (
     ARTISTIC_MOON_DISTANCE_SCALE,
     ARTISTIC_RADIUS_SCALE,
+    DEFAULT_TRAIL_MARKER_RADIUS_SCALE,
     DISTANCE_SCALE,
     MOON_TRAIL_MARKER_RADIUS,
     MOON_TRAIL_MAX_LENGTH,
@@ -69,7 +70,10 @@ class CelestialBody:
 
         self.trails_enabled = make_trail
         self.simulated_seconds_since_last_trail_point = 0
-        self.trail_max_length, self.trail_marker_radius = self._get_trail_settings()
+        self.trail_max_length, self.base_trail_marker_radius = (
+            self._get_trail_settings()
+        )
+        self.trail_marker_radius_scale = DEFAULT_TRAIL_MARKER_RADIUS_SCALE
         self.trail_recent_positions = []
         self.trail_markers = self._create_trail_markers()
         self.trail_marker_has_position = [False for _ in self.trail_markers]
@@ -99,12 +103,24 @@ class CelestialBody:
         self._clear_trail()
 
     def set_trails_enabled(self, trails_enabled: bool) -> None:
+        """
+        Shows or hides this body's trail markers without stopping trail recording.
+        """
         self.trails_enabled = trails_enabled and self.make_trail
 
         for index, marker in enumerate(self.trail_markers):
             marker.visible = (
                 self.trails_enabled and self.trail_marker_has_position[index]
             )
+
+    def set_trail_marker_radius_scale(self, trail_marker_radius_scale: float) -> None:
+        """
+        Updates the radius scale for trail markers.
+        """
+        self.trail_marker_radius_scale = trail_marker_radius_scale
+
+        for marker in self.trail_markers:
+            marker.radius = self._get_scaled_trail_marker_radius()
 
     def _get_visual_radius(self) -> float:
         if self.visual_scaling_mode == VisualScalingMode.REALISTIC:
@@ -161,13 +177,16 @@ class CelestialBody:
         return [
             sphere(
                 pos=vector(0, 0, 0),
-                radius=self.trail_marker_radius,
+                radius=self._get_scaled_trail_marker_radius(),
                 color=self.colour,
                 visible=False,
                 make_trail=False,
             )
             for _ in range(self.trail_max_length)
         ]
+
+    def _get_scaled_trail_marker_radius(self) -> float:
+        return self.base_trail_marker_radius * self.trail_marker_radius_scale
 
     def _update_trail(self, time_step: float) -> None:
         """
@@ -192,6 +211,7 @@ class CelestialBody:
         trail_marker = self.trail_markers[self.next_trail_marker_index]
 
         trail_marker.pos = trail_position
+        trail_marker.radius = self._get_scaled_trail_marker_radius()
         self.trail_marker_has_position[self.next_trail_marker_index] = True
         trail_marker.visible = self.trails_enabled
 

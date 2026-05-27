@@ -8,8 +8,12 @@ from vpython import button, menu, scene, slider, wtext
 
 from config.constants import (
     DEFAULT_DAYS_PER_SECOND,
+    DEFAULT_TRAIL_MARKER_RADIUS_SCALE,
     MAX_DAYS_PER_SECOND,
+    MAX_TRAIL_MARKER_RADIUS_SCALE,
     MIN_DAYS_PER_SECOND,
+    MIN_TRAIL_MARKER_RADIUS_SCALE,
+    TRAIL_MARKER_RADIUS_SCALE_STEP,
 )
 from models.celestial_body import VisualScalingMode
 
@@ -28,6 +32,7 @@ class SimulationControls:
         self.scaling_text: Any = None
         self.trail_button: Any = None
         self.trail_text: Any = None
+        self.trail_marker_radius_text: Any = None
         self.camera_focus_menu: Any = None
         self.camera_focus_button: Any = None
         self.selected_camera_focus_name = "Center"
@@ -73,6 +78,21 @@ class SimulationControls:
         self.trail_button = button(
             text="Hide trails",
             bind=self._toggle_trails,
+        )
+
+        scene.append_to_caption("\nTrail marker size: ")
+
+        slider(
+            min=MIN_TRAIL_MARKER_RADIUS_SCALE,
+            max=MAX_TRAIL_MARKER_RADIUS_SCALE,
+            value=DEFAULT_TRAIL_MARKER_RADIUS_SCALE,
+            step=TRAIL_MARKER_RADIUS_SCALE_STEP,
+            bind=self._update_trail_marker_radius_scale,
+        )
+
+        scene.append_to_caption("  ")
+        self.trail_marker_radius_text = wtext(
+            text=self._trail_marker_radius_scale_label()
         )
 
         scene.append_to_caption("\nCamera focus: ")
@@ -130,6 +150,11 @@ class SimulationControls:
         self.trail_button.text = "Hide trails" if trails_enabled else "Show trails"
         self.trail_text.text = self._trail_label()
 
+    def _update_trail_marker_radius_scale(self, event) -> None:
+        trail_marker_radius_scale = round(event.value, 2)
+        self.simulation.set_trail_marker_radius_scale(trail_marker_radius_scale)
+        self.trail_marker_radius_text.text = self._trail_marker_radius_scale_label()
+
     def _select_camera_focus(self, event) -> None:
         """
         Stores the selected camera focus option without applying it immediately.
@@ -165,6 +190,9 @@ class SimulationControls:
 
     def _trail_label(self) -> str:
         return "On" if self.simulation.trails_enabled else "Off"
+
+    def _trail_marker_radius_scale_label(self) -> str:
+        return f"{self.simulation.trail_marker_radius_scale:.2f}x"
 
     def _get_camera_focus_choices(self) -> list[str]:
         return ["Center"] + [body.name for body in self.simulation.bodies]
