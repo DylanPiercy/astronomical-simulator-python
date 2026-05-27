@@ -27,16 +27,10 @@ class BodyLabel:
         )
 
     def update(self) -> None:
-        """
-        Updates the hover label and all pinned labels.
-        """
         self._update_hover_label()
         self._update_pinned_labels()
 
     def handle_click(self) -> None:
-        """
-        Pins or unpins a label for the currently hovered body.
-        """
         clicked_body = self.hovered_body
 
         if clicked_body is None:
@@ -59,9 +53,6 @@ class BodyLabel:
         )
 
     def _update_hover_label(self) -> None:
-        """
-        Updates the temporary hover label.
-        """
         self.hovered_body = self._get_body_from_object(scene.mouse.pick)
 
         if self.hovered_body is None or self.hovered_body in self.pinned_labels:
@@ -73,17 +64,11 @@ class BodyLabel:
         self.hover_label.visible = True
 
     def _update_pinned_labels(self) -> None:
-        """
-        Keeps pinned labels attached to their bodies.
-        """
         for body, pinned_label in self.pinned_labels.items():
             pinned_label.pos = body.visual.pos
             pinned_label.text = self._build_label_text(body)
 
     def _get_body_from_object(self, picked_object):
-        """
-        Returns the celestial body matching the picked VPython object.
-        """
         for body in self.bodies:
             if body.visual == picked_object:
                 return body
@@ -91,15 +76,33 @@ class BodyLabel:
         return None
 
     def _build_label_text(self, body) -> str:
-        """
-        Builds label text for a celestial body.
-        """
         speed = mag(body.velocity)
 
-        return (
-            f"{body.name}\n"
-            f"Type: {body.type.value}\n"
-            f"Speed: {speed:,.0f} m/s\n"
-            f"Mass: {body.mass:.3e} kg\n"
-            f"Radius: {body.radius:,.0f} m"
+        label_lines = [
+            body.name,
+            f"Type: {body.type.value}",
+        ]
+
+        if body.parent_body is not None:
+            parent_distance = mag(body.position - body.parent_body.position)
+
+            label_lines.extend(
+                [
+                    f"Parent: {body.parent_body.name}",
+                    f"Distance from parent: {parent_distance:.3e} m",
+                ]
+            )
+
+        label_lines.extend(
+            [
+                f"Speed: {speed:,.0f} m/s",
+                f"Velocity: {self._format_vector(body.velocity)} m/s",
+                f"Mass: {body.mass:.3e} kg",
+                f"Radius: {body.radius:,.0f} m",
+            ]
         )
+
+        return "\n".join(label_lines)
+
+    def _format_vector(self, value: vector) -> str:
+        return f"({value.x:.3e}, {value.y:.3e}, {value.z:.3e})"
