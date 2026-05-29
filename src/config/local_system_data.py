@@ -11,7 +11,6 @@ State vectors are generated separately from JPL Horizons.
 SUN = "Sun"
 SUN_MASS = 1.9885e30
 SUN_RADIUS = 696_340_000
-SUN_AVERAGE_VELOCITY = 0
 
 # Mercury
 MERCURY = "Mercury"

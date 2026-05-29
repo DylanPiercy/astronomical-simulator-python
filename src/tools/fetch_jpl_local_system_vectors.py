@@ -26,6 +26,7 @@ OUTPUT_FILE = (
     Path(__file__).resolve().parents[1] / "config" / "local_system_state_vectors.py"
 )
 
+SOLAR_SYSTEM_BARYCENTRE = "500@0"
 SUN_CENTER = "500@10"
 EARTH_CENTER = "500@399"
 MARS_CENTER = "500@499"
@@ -49,6 +50,9 @@ class StateVector:
 
 
 BODIES: dict[str, BodyQuery] = {
+    # Sun relative to the Solar System barycentre
+    "SUN": BodyQuery(command="10", center=SOLAR_SYSTEM_BARYCENTRE),
+
     # Planets and dwarf planets relative to the Sun
     "MERCURY": BodyQuery(command="199", center=SUN_CENTER),
     "VENUS": BodyQuery(command="299", center=SUN_CENTER),
@@ -59,6 +63,7 @@ BODIES: dict[str, BodyQuery] = {
     "URANUS": BodyQuery(command="799", center=SUN_CENTER),
     "NEPTUNE": BodyQuery(command="899", center=SUN_CENTER),
     "PLUTO": BodyQuery(command="999", center=SUN_CENTER),
+
     # Moons relative to their parent planets or dwarf planets
     # Earth
     "MOON": BodyQuery(command="301", center=EARTH_CENTER),
@@ -178,6 +183,7 @@ def write_output_file(vectors: dict[str, StateVector]) -> None:
         "Positions are in metres.",
         "Velocities are in metres per second.",
         "",
+        "Sun vector is relative to the Solar System barycentre.",
         "Planet and dwarf planet vectors are relative to the Sun.",
         "Moon vectors are relative to their parent planets or dwarf planets.",
         '"""',

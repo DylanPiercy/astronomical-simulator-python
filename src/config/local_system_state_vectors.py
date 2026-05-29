@@ -5,11 +5,15 @@ Generated for 2026-Jan-01 00:00 UTC.
 Positions are in metres.
 Velocities are in metres per second.
 
+Sun vector is relative to the Solar System barycentre.
 Planet and dwarf planet vectors are relative to the Sun.
 Moon vectors are relative to their parent planets or dwarf planets.
 """
 
 STATE_VECTORS_GENERATED = True
+
+SUN_RELATIVE_POSITION = (-458863967.4035421, -827774246.9901335, 19699675.02418195)
+SUN_RELATIVE_VELOCITY = (12.42505794360611, 0.3078762484369151, -0.2352803314883807)
 
 MERCURY_RELATIVE_POSITION = (-32193656906.76167, -61216587982.984604, -2049979952.579837)
 MERCURY_RELATIVE_VELOCITY = (33299.12211950884, -20323.193266176917, -4715.026944319221)
