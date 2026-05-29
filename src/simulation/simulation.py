@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from math import ceil
 from typing import Optional
 
-from vpython import mag, rate, scene, vector
+from vpython import mag, rate, scene
 
 from config.constants import (
     DEFAULT_DAYS_PER_SECOND,
@@ -36,7 +36,7 @@ class Simulation:
 
         self.is_paused = False
         self.days_per_second = DEFAULT_DAYS_PER_SECOND
-        self.camera_focus_body: Optional[CelestialBody] = None
+        self.camera_focus_body: CelestialBody = self._get_default_camera_focus_body()
         self.visual_scaling_mode = VisualScalingMode.ARTISTIC
         self.trails_enabled = True
         self.trail_marker_radius_scale = DEFAULT_TRAIL_MARKER_RADIUS_SCALE
@@ -69,10 +69,7 @@ class Simulation:
     def toggle_pause(self) -> None:
         self.is_paused = not self.is_paused
 
-    def set_days_per_second(
-        self,
-        days_per_second: int,
-    ) -> None:
+    def set_days_per_second(self, days_per_second: int) -> None:
         self.days_per_second = days_per_second
 
     def set_camera_focus_body(self, body: CelestialBody) -> None:
@@ -111,6 +108,9 @@ class Simulation:
         Stores the UI text widget used to display system diagnostics.
         """
         self.system_diagnostics_text = system_diagnostics_text
+
+    def _get_default_camera_focus_body(self) -> CelestialBody:
+        return self.bodies[0]
 
     def _handle_scene_click(self, _event=None) -> None:
         """
@@ -152,12 +152,6 @@ class Simulation:
         )
 
     def _update_camera_focus(self) -> None:
-        """
-        Updates the camera center to follow the selected body.
-        """
-        if self.camera_focus_body is None:
-            scene.center = vector(0, 0, 0)
-            return
 
         scene.center = self.camera_focus_body.visual.pos
 

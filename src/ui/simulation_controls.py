@@ -35,7 +35,7 @@ class SimulationControls:
         self.trail_marker_radius_text: Any = None
         self.camera_focus_menu: Any = None
         self.camera_focus_button: Any = None
-        self.selected_camera_focus_name = "Center"
+        self.selected_camera_focus_name = self._get_default_camera_focus_name()
         self.simulation_date_text: Any = None
         self.system_diagnostics_text: Any = None
 
@@ -97,11 +97,9 @@ class SimulationControls:
 
         scene.append_to_caption("\nCamera focus: ")
 
-        default_body_focused = self.simulation.bodies[0].name
-
         self.camera_focus_menu = menu(
             choices=self._get_camera_focus_choices(),
-            selected=default_body_focused,
+            selected=self.selected_camera_focus_name,
             bind=self._select_camera_focus,
         )
 
@@ -163,11 +161,12 @@ class SimulationControls:
         """
         Applies the selected camera focus option.
         """
-        selected_name = self.selected_camera_focus_name
-
         selected_body = next(
-            body for body in self.simulation.bodies if body.name == selected_name
+            body
+            for body in self.simulation.bodies
+            if body.name == self.selected_camera_focus_name
         )
+
         self.simulation.set_camera_focus_body(selected_body)
 
     def _simulation_speed_label(self) -> str:
@@ -184,3 +183,6 @@ class SimulationControls:
 
     def _get_camera_focus_choices(self) -> list[str]:
         return [body.name for body in self.simulation.bodies]
+
+    def _get_default_camera_focus_name(self) -> str:
+        return self.simulation.camera_focus_body.name
