@@ -97,9 +97,11 @@ class SimulationControls:
 
         scene.append_to_caption("\nCamera focus: ")
 
+        default_body_focused = self.simulation.bodies[0].name
+
         self.camera_focus_menu = menu(
             choices=self._get_camera_focus_choices(),
-            selected="Center",
+            selected=default_body_focused,
             bind=self._select_camera_focus,
         )
 
@@ -117,10 +119,6 @@ class SimulationControls:
         scene.append_to_caption("\n")
         self.system_diagnostics_text = wtext(text="")
         self.simulation.set_system_diagnostics_text(self.system_diagnostics_text)
-
-        scene.append_to_caption("\nControls: Press SPACE to pause/resume.")
-
-        scene.bind("keydown", self._handle_key_down)
 
     def _toggle_pause(self, _event=None) -> None:
         self.simulation.toggle_pause()
@@ -167,20 +165,10 @@ class SimulationControls:
         """
         selected_name = self.selected_camera_focus_name
 
-        if selected_name == "Center":
-            self.simulation.set_camera_focus_body(None)
-            return
-
         selected_body = next(
             body for body in self.simulation.bodies if body.name == selected_name
         )
         self.simulation.set_camera_focus_body(selected_body)
-
-    def _handle_key_down(self, event) -> None:
-        key = str(event.key).lower()
-
-        if key == " ":
-            self._toggle_pause()
 
     def _simulation_speed_label(self) -> str:
         return f"{self.simulation.days_per_second} simulated day(s) per second"
@@ -195,4 +183,4 @@ class SimulationControls:
         return f"{self.simulation.trail_marker_radius_scale:.2f}x"
 
     def _get_camera_focus_choices(self) -> list[str]:
-        return ["Center"] + [body.name for body in self.simulation.bodies]
+        return [body.name for body in self.simulation.bodies]

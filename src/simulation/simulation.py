@@ -75,7 +75,7 @@ class Simulation:
     ) -> None:
         self.days_per_second = days_per_second
 
-    def set_camera_focus_body(self, body: Optional[CelestialBody]) -> None:
+    def set_camera_focus_body(self, body: CelestialBody) -> None:
         self.camera_focus_body = body
 
     def set_visual_scaling_mode(self, visual_scaling_mode: VisualScalingMode) -> None:
