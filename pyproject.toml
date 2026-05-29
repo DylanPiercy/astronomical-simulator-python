@@ -1,0 +1,28 @@
+[project]
+name = "astronomical-simulator-python"
+version = "0.1.0"
+description = "A VPython-based 3D astronomical simulator using Newtonian gravity and JPL state vectors."
+requires-python = ">=3.12"
+dependencies = [
+    "vpython==7.6.5",
+    "setuptools==80.10.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black==26.5.1",
+]
+
+[project.scripts]
+astro-sim = "main:main"
+fetch-jpl-vectors = "tools.fetch_jpl_local_system_vectors:run_fetch_tool"
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+
+extend-exclude = '''
+(
+  src/config/local_system_state_vectors.py
+)
+'''

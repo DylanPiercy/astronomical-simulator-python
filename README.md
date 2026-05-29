@@ -11,6 +11,7 @@
     - [Project Setup](#project-setup)
         - [Prerequisites](#prerequisites)
         - [Setup Virtual Environment](#setup-virtual-environment)
+    - [Running Astronomical Simulator](#running-astronomical-simulator)
     - [Git Commit Types](#git-commit-types)
     - [Known Bugs](#known-bugs)
 
@@ -54,15 +55,26 @@ astro_env/Scripts/Activate.ps1
 #### Step 3: Install dependencies
 
 ```bash
-pip install -r requirements.txt
+# For project root
+pip install -e .
+
+# For project dev tools
+pip install -e ".[dev]"
 ```
 
 > **💡 Tip:** To deactivate the virtual environment later, simply run `deactivate`
 
 ---
 
+## Running Astronomical Simulator
 
+```bash
+# Run the simulation
+astro-sim
 
+# Run the JPL fetch tool exclusively
+fetch-jpl-vectors
+```
 
 ---
 
