@@ -29,7 +29,8 @@ def create_local_system() -> SolarSystem:
         mass=SUN_MASS,
         radius=SUN_RADIUS,
         position=vector(*SUN_RELATIVE_POSITION),
-        velocity=vector(*SUN_RELATIVE_VELOCITY) + vector(0, LOCAL_SYSTEM_GALACTIC_VELOCITY, 0),
+        velocity=vector(*SUN_RELATIVE_VELOCITY)
+        + vector(0, LOCAL_SYSTEM_GALACTIC_VELOCITY, 0),
         colour=color.yellow,
     )
 

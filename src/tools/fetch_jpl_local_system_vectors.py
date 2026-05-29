@@ -52,7 +52,6 @@ class StateVector:
 BODIES: dict[str, BodyQuery] = {
     # Sun relative to the Solar System barycentre
     "SUN": BodyQuery(command="10", center=SOLAR_SYSTEM_BARYCENTRE),
-
     # Planets and dwarf planets relative to the Sun
     "MERCURY": BodyQuery(command="199", center=SUN_CENTER),
     "VENUS": BodyQuery(command="299", center=SUN_CENTER),
@@ -63,7 +62,6 @@ BODIES: dict[str, BodyQuery] = {
     "URANUS": BodyQuery(command="799", center=SUN_CENTER),
     "NEPTUNE": BodyQuery(command="899", center=SUN_CENTER),
     "PLUTO": BodyQuery(command="999", center=SUN_CENTER),
-
     # Moons relative to their parent planets or dwarf planets
     # Earth
     "MOON": BodyQuery(command="301", center=EARTH_CENTER),
