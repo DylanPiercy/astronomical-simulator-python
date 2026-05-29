@@ -7,6 +7,12 @@ Radius values are in metres.
 State vectors are generated separately from JPL Horizons.
 """
 
+# System name
+LOCAL_SYSTEM_NAME = "Local Solar System"
+
+# System Velocity relative to the galactic centre
+LOCAL_SYSTEM_GALACTIC_VELOCITY = 230_000  # m/s
+
 # Sun
 SUN = "Sun"
 SUN_MASS = 1.9885e30
