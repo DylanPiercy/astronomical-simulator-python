@@ -2,14 +2,13 @@
 Helper function to create celestial bodies for presets.
 """
 
-from math import cos, radians, sin
-
 from vpython import vector
 
 from models.celestial_body import CelestialBody, CelestialBodyType
 
 
 def create_star(
+    id: str,
     name: str,
     mass: float,
     radius: float,
@@ -18,6 +17,7 @@ def create_star(
     colour: vector,
 ) -> CelestialBody:
     return CelestialBody(
+        id=id,
         type=CelestialBodyType.STAR,
         name=name,
         mass=mass,
@@ -30,6 +30,7 @@ def create_star(
 
 
 def create_orbiting_body_from_state_vector(
+    id: str,
     type: CelestialBodyType,
     name: str,
     mass: float,
@@ -43,6 +44,7 @@ def create_orbiting_body_from_state_vector(
     Creates an orbiting body from a real relative state vector.
     """
     return CelestialBody(
+        id=id,
         type=type,
         name=name,
         mass=mass,

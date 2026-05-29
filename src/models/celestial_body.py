@@ -11,6 +11,7 @@ from vpython import sphere, vector
 from config.constants import (
     ARTISTIC_MOON_DISTANCE_SCALE,
     ARTISTIC_RADIUS_SCALE,
+    ASTEROID_COMET_TRAIL_MARKER_RADIUS,
     DEFAULT_TRAIL_MARKER_RADIUS_SCALE,
     DISTANCE_SCALE,
     MAX_DYNAMIC_TRAIL_MARKER_COUNT,
@@ -23,7 +24,6 @@ from config.constants import (
     TRAIL_GAP_POINTS,
     TRAIL_ORBIT_FRACTION,
     TRAIL_POINTS_PER_SIMULATED_DAY,
-    ASTEROID_COMET_TRAIL_MARKER_RADIUS,
 )
 
 
@@ -51,6 +51,7 @@ class CelestialBody:
 
     def __init__(
         self,
+        id: str,
         type: CelestialBodyType,
         name: str,
         mass: float,
@@ -62,6 +63,7 @@ class CelestialBody:
         parent_body: Optional["CelestialBody"] = None,
         visual_scaling_mode: VisualScalingMode = VisualScalingMode.ARTISTIC,
     ):
+        self.id = id
         self.type = type
         self.name = name
         self.mass = mass
@@ -95,14 +97,15 @@ class CelestialBody:
 
         self.previous_visual_position = self._copy_position(self.visual.pos)
 
+    def get_display_name(self) -> str:
+        return f"{self.name} ({self.type.value})"
+
     def update_visual_position(self, time_step: float = 0) -> None:
         """
         Updates the VPython sphere position to match the body's physical position.
         """
         old_visual_position = self._copy_position(self.visual.pos)
-
         self.visual.pos = self._get_visual_position()
-
         new_visual_position = self._copy_position(self.visual.pos)
 
         self._update_trail(
@@ -288,7 +291,6 @@ class CelestialBody:
             )
 
             self._add_trail_sample(interpolated_position)
-
             self.simulated_seconds_since_last_trail_point -= trail_point_interval
 
     def _add_trail_sample(self, trail_position: vector) -> None:
@@ -322,7 +324,6 @@ class CelestialBody:
         Interpolates between two visual positions.
         """
         clamped_ratio = max(0, min(1, interpolation_ratio))
-
         return start_position + (end_position - start_position) * clamped_ratio
 
     def _clear_trail(self) -> None:

@@ -35,7 +35,10 @@ class SimulationControls:
         self.trail_marker_radius_text: Any = None
         self.camera_focus_menu: Any = None
         self.camera_focus_button: Any = None
-        self.selected_camera_focus_name = self._get_default_camera_focus_name()
+
+        self.camera_focus_display_name_to_id = self._get_id_from_display_name()
+        self.selected_camera_focus_id = self.simulation.camera_focus_body.id
+
         self.simulation_date_text: Any = None
         self.system_diagnostics_text: Any = None
 
@@ -99,7 +102,7 @@ class SimulationControls:
 
         self.camera_focus_menu = menu(
             choices=self._get_camera_focus_choices(),
-            selected=self.selected_camera_focus_name,
+            selected=self._get_display_name_from_id(self.selected_camera_focus_id),
             bind=self._select_camera_focus,
         )
 
@@ -153,18 +156,20 @@ class SimulationControls:
 
     def _select_camera_focus(self, event) -> None:
         """
-        Stores the selected camera focus option without applying it immediately.
+        Converts the selected display name into a stable body ID.
         """
-        self.selected_camera_focus_name = event.selected
+        self.selected_camera_focus_id = self.camera_focus_display_name_to_id[
+            event.selected
+        ]
 
     def _apply_camera_focus(self, _event=None) -> None:
         """
-        Applies the selected camera focus option.
+        Applies the selected camera focus option using the stable body ID.
         """
         selected_body = next(
             body
             for body in self.simulation.bodies
-            if body.name == self.selected_camera_focus_name
+            if body.id == self.selected_camera_focus_id
         )
 
         self.simulation.set_camera_focus_body(selected_body)
@@ -182,7 +187,14 @@ class SimulationControls:
         return f"{self.simulation.trail_marker_radius_scale:.2f}x"
 
     def _get_camera_focus_choices(self) -> list[str]:
-        return [body.name for body in self.simulation.bodies]
+        return list(self.camera_focus_display_name_to_id.keys())
 
-    def _get_default_camera_focus_name(self) -> str:
-        return self.simulation.camera_focus_body.name
+    def _get_id_from_display_name(self) -> dict[str, str]:
+        return {body.get_display_name(): body.id for body in self.simulation.bodies}
+
+    def _get_display_name_from_id(self, body_id: str) -> str:
+        selected_body = next(
+            body for body in self.simulation.bodies if body.id == body_id
+        )
+
+        return selected_body.get_display_name()

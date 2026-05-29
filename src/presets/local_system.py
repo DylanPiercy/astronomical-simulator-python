@@ -25,6 +25,7 @@ def create_local_system() -> SolarSystem:
         )
 
     sun = create_star(
+        id="sun",
         name=SUN,
         mass=SUN_MASS,
         radius=SUN_RADIUS,
@@ -35,6 +36,7 @@ def create_local_system() -> SolarSystem:
     )
 
     mercury = create_orbiting_body_from_state_vector(
+        id="mercury",
         type=CelestialBodyType.PLANET,
         name=MERCURY,
         mass=MERCURY_MASS,
@@ -46,6 +48,7 @@ def create_local_system() -> SolarSystem:
     )
 
     venus = create_orbiting_body_from_state_vector(
+        id="venus",
         type=CelestialBodyType.PLANET,
         name=VENUS,
         mass=VENUS_MASS,
@@ -57,6 +60,7 @@ def create_local_system() -> SolarSystem:
     )
 
     earth = create_orbiting_body_from_state_vector(
+        id="earth",
         type=CelestialBodyType.PLANET,
         name=EARTH,
         mass=EARTH_MASS,
@@ -68,6 +72,7 @@ def create_local_system() -> SolarSystem:
     )
 
     moon = create_orbiting_body_from_state_vector(
+        id="earth_moon",
         type=CelestialBodyType.MOON,
         name=MOON,
         mass=MOON_MASS,
@@ -79,6 +84,7 @@ def create_local_system() -> SolarSystem:
     )
 
     mars = create_orbiting_body_from_state_vector(
+        id="mars",
         type=CelestialBodyType.PLANET,
         name=MARS,
         mass=MARS_MASS,
@@ -90,6 +96,7 @@ def create_local_system() -> SolarSystem:
     )
 
     phobos = create_orbiting_body_from_state_vector(
+        id="mars_phobos",
         type=CelestialBodyType.MOON,
         name=PHOBOS,
         mass=PHOBOS_MASS,
@@ -101,6 +108,7 @@ def create_local_system() -> SolarSystem:
     )
 
     deimos = create_orbiting_body_from_state_vector(
+        id="mars_deimos",
         type=CelestialBodyType.MOON,
         name=DEIMOS,
         mass=DEIMOS_MASS,
@@ -112,6 +120,7 @@ def create_local_system() -> SolarSystem:
     )
 
     jupiter = create_orbiting_body_from_state_vector(
+        id="jupiter",
         type=CelestialBodyType.PLANET,
         name=JUPITER,
         mass=JUPITER_MASS,
@@ -123,6 +132,7 @@ def create_local_system() -> SolarSystem:
     )
 
     io = create_orbiting_body_from_state_vector(
+        id="jupiter_io",
         type=CelestialBodyType.MOON,
         name=IO,
         mass=IO_MASS,
@@ -134,6 +144,7 @@ def create_local_system() -> SolarSystem:
     )
 
     europa = create_orbiting_body_from_state_vector(
+        id="jupiter_europa",
         type=CelestialBodyType.MOON,
         name=EUROPA,
         mass=EUROPA_MASS,
@@ -145,6 +156,7 @@ def create_local_system() -> SolarSystem:
     )
 
     ganymede = create_orbiting_body_from_state_vector(
+        id="jupiter_ganymede",
         type=CelestialBodyType.MOON,
         name=GANYMEDE,
         mass=GANYMEDE_MASS,
@@ -156,6 +168,7 @@ def create_local_system() -> SolarSystem:
     )
 
     callisto = create_orbiting_body_from_state_vector(
+        id="jupiter_callisto",
         type=CelestialBodyType.MOON,
         name=CALLISTO,
         mass=CALLISTO_MASS,
@@ -167,6 +180,7 @@ def create_local_system() -> SolarSystem:
     )
 
     saturn = create_orbiting_body_from_state_vector(
+        id="saturn",
         type=CelestialBodyType.PLANET,
         name=SATURN,
         mass=SATURN_MASS,
@@ -178,6 +192,7 @@ def create_local_system() -> SolarSystem:
     )
 
     mimas = create_orbiting_body_from_state_vector(
+        id="saturn_mimas",
         type=CelestialBodyType.MOON,
         name=MIMAS,
         mass=MIMAS_MASS,
@@ -189,6 +204,7 @@ def create_local_system() -> SolarSystem:
     )
 
     enceladus = create_orbiting_body_from_state_vector(
+        id="saturn_enceladus",
         type=CelestialBodyType.MOON,
         name=ENCELADUS,
         mass=ENCELADUS_MASS,
@@ -200,6 +216,7 @@ def create_local_system() -> SolarSystem:
     )
 
     tethys = create_orbiting_body_from_state_vector(
+        id="saturn_tethys",
         type=CelestialBodyType.MOON,
         name=TETHYS,
         mass=TETHYS_MASS,
@@ -211,6 +228,7 @@ def create_local_system() -> SolarSystem:
     )
 
     dione = create_orbiting_body_from_state_vector(
+        id="saturn_dione",
         type=CelestialBodyType.MOON,
         name=DIONE,
         mass=DIONE_MASS,
@@ -222,6 +240,7 @@ def create_local_system() -> SolarSystem:
     )
 
     rhea = create_orbiting_body_from_state_vector(
+        id="saturn_rhea",
         type=CelestialBodyType.MOON,
         name=RHEA,
         mass=RHEA_MASS,
@@ -233,6 +252,7 @@ def create_local_system() -> SolarSystem:
     )
 
     titan = create_orbiting_body_from_state_vector(
+        id="saturn_titan",
         type=CelestialBodyType.MOON,
         name=TITAN,
         mass=TITAN_MASS,
@@ -244,6 +264,7 @@ def create_local_system() -> SolarSystem:
     )
 
     iapetus = create_orbiting_body_from_state_vector(
+        id="saturn_iapetus",
         type=CelestialBodyType.MOON,
         name=IAPETUS,
         mass=IAPETUS_MASS,
@@ -255,6 +276,7 @@ def create_local_system() -> SolarSystem:
     )
 
     uranus = create_orbiting_body_from_state_vector(
+        id="uranus",
         type=CelestialBodyType.PLANET,
         name=URANUS,
         mass=URANUS_MASS,
@@ -266,6 +288,7 @@ def create_local_system() -> SolarSystem:
     )
 
     ariel = create_orbiting_body_from_state_vector(
+        id="uranus_ariel",
         type=CelestialBodyType.MOON,
         name=ARIEL,
         mass=ARIEL_MASS,
@@ -277,6 +300,7 @@ def create_local_system() -> SolarSystem:
     )
 
     umbriel = create_orbiting_body_from_state_vector(
+        id="uranus_umbriel",
         type=CelestialBodyType.MOON,
         name=UMBRIEL,
         mass=UMBRIEL_MASS,
@@ -288,6 +312,7 @@ def create_local_system() -> SolarSystem:
     )
 
     titania = create_orbiting_body_from_state_vector(
+        id="uranus_titania",
         type=CelestialBodyType.MOON,
         name=TITANIA,
         mass=TITANIA_MASS,
@@ -299,6 +324,7 @@ def create_local_system() -> SolarSystem:
     )
 
     oberon = create_orbiting_body_from_state_vector(
+        id="uranus_oberon",
         type=CelestialBodyType.MOON,
         name=OBERON,
         mass=OBERON_MASS,
@@ -310,6 +336,7 @@ def create_local_system() -> SolarSystem:
     )
 
     miranda = create_orbiting_body_from_state_vector(
+        id="uranus_miranda",
         type=CelestialBodyType.MOON,
         name=MIRANDA,
         mass=MIRANDA_MASS,
@@ -321,6 +348,7 @@ def create_local_system() -> SolarSystem:
     )
 
     neptune = create_orbiting_body_from_state_vector(
+        id="neptune",
         type=CelestialBodyType.PLANET,
         name=NEPTUNE,
         mass=NEPTUNE_MASS,
@@ -332,6 +360,7 @@ def create_local_system() -> SolarSystem:
     )
 
     triton = create_orbiting_body_from_state_vector(
+        id="neptune_triton",
         type=CelestialBodyType.MOON,
         name=TRITON,
         mass=TRITON_MASS,
@@ -343,6 +372,7 @@ def create_local_system() -> SolarSystem:
     )
 
     pluto = create_orbiting_body_from_state_vector(
+        id="pluto",
         type=CelestialBodyType.DWARF_PLANET,
         name=PLUTO,
         mass=PLUTO_MASS,
@@ -354,6 +384,7 @@ def create_local_system() -> SolarSystem:
     )
 
     charon = create_orbiting_body_from_state_vector(
+        id="pluto_charon",
         type=CelestialBodyType.MOON,
         name=CHARON,
         mass=CHARON_MASS,
