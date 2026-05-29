@@ -2,6 +2,15 @@
 Entry point for the astronomical simulator.
 """
 
+import warnings
+
+warnings.filterwarnings(
+    "ignore",
+    message="pkg_resources is deprecated as an API.*",
+    category=UserWarning,
+    module="vpython",
+)
+
 from simulation.scene_setup import setup_scene
 from simulation.simulation import Simulation
 from ui.simulation_controls import SimulationControls
